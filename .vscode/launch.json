@@ -8,20 +8,24 @@
             "name": "Bot Production",
             "type": "python",
             "request": "launch",
-            "program": "galaxy_bot.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
+            "program": "${workspaceFolder}/src/galaxy_bot.py",
             "args": [
-                "-p"
-            ]
+                "--production"
+            ],
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
         },
         {
             "name": "Bot Development",
             "type": "python",
             "request": "launch",
-            "program": "galaxy_bot.py",
+            "program": "${workspaceFolder}/src/galaxy_bot.py",
             "console": "integratedTerminal",
-            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
         }
     ]
 }

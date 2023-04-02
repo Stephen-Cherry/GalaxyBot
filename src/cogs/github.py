@@ -14,9 +14,7 @@ class GithubCog(commands.Cog):
     )
     async def github(self, ctx: discord.ApplicationContext) -> None:
         """Hello Command"""
-        await ctx.respond(
-            "https://github.com/Narolith/csharp-GalaxyBot/", ephemeral=True
-        )
+        await ctx.respond("https://github.com/Narolith/GalaxyBotv2/", ephemeral=True)
 
 
 def setup(bot: discord.Bot) -> None:
