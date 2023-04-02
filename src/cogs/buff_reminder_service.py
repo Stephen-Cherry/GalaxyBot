@@ -84,7 +84,7 @@ class BuffReminderService(commands.Cog):
         task loop. If the buff due time has already passed, it will not wait and
         the buff reminder task loop will start immediately.
         """
-        time_to_wait = (self.buff_due_time - datetime.utcnow()).total_seconds()
+        time_to_wait = (self.buff_due_time - datetime.now(pytz.UTC)).total_seconds()
         if time_to_wait > 0:
             await asyncio.sleep(time_to_wait)
 
@@ -108,10 +108,8 @@ def calculate_buff_due_time() -> datetime:
     now_central = datetime.now(central)
 
     tomorrow_central = now_central + timedelta(days=1)
-    tomorrow_12am_central = central.localize(
-        datetime(
-            tomorrow_central.year, tomorrow_central.month, tomorrow_central.day, 0, 0
-        )
+    tomorrow_12am_central = tomorrow_central.replace(
+        hour=0, minute=0, second=0, microsecond=0
     )
 
     tomorrow_12am_utc = tomorrow_12am_central.astimezone(pytz.UTC)
@@ -134,12 +132,12 @@ def get_buff_channel_id() -> int:
     Raises:
         ValueError: If the Buff Channel ID is not found in environment variables.
     """
-    is_production = os.environ["is_production"] == "true"
+    is_production = os.environ.get("is_production") == "true"
+    if is_production is None:
+        raise ValueError("Production boolean not found in Environment Variables")
     channel_id = os.environ.get(
         "PRODUCTION_BUFF_CHANNEL" if is_production else "DEVELOPMENT_BUFF_CHANNEL"
     )
-
     if channel_id:
         return int(channel_id)
-
     raise ValueError("Could not find Buff Channel ID in Environment Variables")
