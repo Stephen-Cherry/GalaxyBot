@@ -1,0 +1,50 @@
+name: Pull Request Test
+
+on:
+  pull_request:
+    branches:
+      - development
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run tests
+        run: pytest
+      - name: Check if all tests are passing
+        run: |
+          if [ "$?" -eq 0 ]; then
+            echo "All tests passed!"
+          else
+            echo "Tests failed. Please fix before merging to production."
+            exit 1
+          fi
+
+  merge-to-production:
+    needs: build
+    if: ${{ github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.base.ref == 'production' && github.event.pull_request.merged == true }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Merge pull request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.head_ref }}
+          commit-message: "Merge pull request #${{ github.event.pull_request.number }} from ${GITHUB_REF#refs/heads/}} to production"
+          title: "Merge pull request #${{ github.event.pull_request.number }} from ${GITHUB_REF#refs/heads/}} to production"
+          body: "This pull request was automatically merged because all tests passed."
