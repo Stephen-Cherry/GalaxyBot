@@ -3,13 +3,10 @@ name: Test and Merge to Production
 on:
   pull_request:
     branches:
-      - development
+      - production
     types:
       - opened
       - synchronize
-  push:
-    branches:
-      - production
 
 jobs:
   build:
@@ -17,14 +14,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 3.9
+      - name: Set up Python 3.11
         uses: actions/setup-python@v2
         with:
-          python-version: 3.9
+          python-version: 3.11
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Run tests
-        run: pytest
+        run: python -m unittest discover tests
 
   merge-to-production:
     if: ${{ github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
@@ -36,10 +33,7 @@ jobs:
         with:
           ref: production
       - name: Merge pull request
-        uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.head_ref }}
-          commit-message: "Merge pull request #${{ github.event.pull_request.number }} from ${GITHUB_REF#refs/heads/}} to production"
-          title: "Merge pull request #${{ github.event.pull_request.number }} from ${GITHUB_REF#refs/heads/}} to production"
-          body: "This pull request was automatically merged because all tests passed."
+        run: |
+          git checkout production
+          git merge --no-ff --no-edit "${{ github.event.pull_request.head.sha }}"
+          git push origin production
