@@ -3,25 +3,32 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
+    // Two configurations to run src/galaxy_bot.py
+    // 1. Bot Production - for running the bot in production
+    // 2. Bot Development - for running the bot in development
     "configurations": [
         {
             "name": "Bot Production",
             "type": "python",
             "request": "launch",
-            "program": "galaxy_bot.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
+            "program": "${workspaceFolder}/src/galaxy_bot.py",
             "args": [
-                "-p"
-            ]
+                "--production"
+            ],
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
         },
         {
             "name": "Bot Development",
             "type": "python",
             "request": "launch",
-            "program": "galaxy_bot.py",
+            "program": "${workspaceFolder}/src/galaxy_bot.py",
             "console": "integratedTerminal",
-            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
         }
     ]
 }

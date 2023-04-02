@@ -47,7 +47,10 @@ def main():
 
 def load_cogs(bot, cogs_dir="cogs"):
     """Load all cogs from the specified directory."""
-    for file_name in os.listdir(cogs_dir):
+    main_script_dir = os.path.dirname(os.path.abspath(__file__))
+    cogs_abs_path = os.path.join(main_script_dir, cogs_dir)
+
+    for file_name in os.listdir(cogs_abs_path):
         name, ext = os.path.splitext(file_name)
         if ext == ".py":
             bot.load_extension(f"{cogs_dir}.{name}")
