@@ -22,7 +22,13 @@ class TestBuffReminderService(unittest.IsolatedAsyncioTestCase):
     Test cases for the BuffReminderService cog.
     """
 
-    @patch.dict("src.cogs.buff_reminder_service.os.environ", {"is_production": "false"})
+    @patch.dict(
+        "src.cogs.buff_reminder_service.os.environ",
+        {
+            "is_production": "false",
+            "DEVELOPMENT_BUFF_CHANNEL": "1234",
+        },
+    )
     async def asyncSetUp(self):
         """
         Set up the test environment by initializing the bot and the BuffReminderService instance.
@@ -31,22 +37,7 @@ class TestBuffReminderService(unittest.IsolatedAsyncioTestCase):
         self.bot = MagicMock(spec=discord.Bot)
         self.buff_reminder_service = BuffReminderService(self.bot)
 
-    @patch("src.cogs.buff_reminder_service.datetime")
-    async def async_test_init(self, mock_datetime):
-        """
-        Test the __init__ method of the BuffReminderService cog.
-
-        This method tests the __init__ method by checking if the BuffReminderService
-        instance is properly initialized and if the cooldown attribute is correctly set
-        to datetime.min.
-        """
-        mock_datetime.min.return_value = datetime.min
-        mock_datetime.utcnow.return_value = datetime.utcnow()
-        buff_reminder_service = BuffReminderService(self.bot)
-        self.assertIsNotNone(buff_reminder_service)
-        self.assertEqual(buff_reminder_service.cooldown, datetime.min)
-
-    async def async_test_on_message(self):
+    async def test_on_message(self):
         """
         Test the on_message method of the BuffReminderService cog.
 
@@ -72,7 +63,7 @@ class TestBuffReminderService(unittest.IsolatedAsyncioTestCase):
         await self.buff_reminder_service.on_message(message)
         message.channel.send.assert_not_called()
 
-    async def async_test_buff_reminder_task(self):
+    async def test_buff_reminder_task(self):
         """
         Test the buff_reminder_task method of the BuffReminderService cog.
 
@@ -102,9 +93,8 @@ class TestBuffReminderService(unittest.IsolatedAsyncioTestCase):
         with self.assertRaises(ValueError):
             await self.buff_reminder_service.buff_reminder_task()
 
-    @patch("src.cogs.buff_reminder_service.datetime")
     @patch("src.cogs.buff_reminder_service.asyncio")
-    async def async_test_before_buff_reminder_task(self, mock_asyncio, mock_datetime):
+    async def test_before_buff_reminder_task(self, mock_asyncio):
         """
         Test the before_buff_reminder_task method of the BuffReminderService cog.
 
@@ -113,25 +103,26 @@ class TestBuffReminderService(unittest.IsolatedAsyncioTestCase):
         buff reminder task loop.
         """
         # Test when buff due time is in the future
-        mock_datetime.utcnow.return_value = datetime.utcnow()
-        self.buff_reminder_service.buff_due_time = datetime.utcnow() + timedelta(
+        self.buff_reminder_service.buff_due_time = datetime.now(pytz.UTC) + timedelta(
             minutes=5
         )
         mock_asyncio.sleep = AsyncMock()
 
         await self.buff_reminder_service.before_buff_reminder_task()
-        mock_asyncio.sleep.assert_called_once_with(300)
+        unittest.TestCase().assertAlmostEqual(
+            300, mock_asyncio.sleep.call_args[0][0], places=2
+        )
 
         # Test when buff due time has already passed
         mock_asyncio.sleep.reset_mock()
-        self.buff_reminder_service.buff_due_time = datetime.utcnow() - timedelta(
+        self.buff_reminder_service.buff_due_time = datetime.now(pytz.UTC) - timedelta(
             minutes=5
         )
 
         await self.buff_reminder_service.before_buff_reminder_task()
         mock_asyncio.sleep.assert_not_called()
 
-    async def async_test_calculate_buff_due_time(self):
+    async def test_calculate_buff_due_time(self):
         """
         Test the calculate_buff_due_time function.
 
