@@ -1,4 +1,4 @@
-name: Test and Merge to Production
+name: Test and Auto Merge to Production
 
 on:
   pull_request:
@@ -23,17 +23,14 @@ jobs:
       - name: Run tests
         run: python -m unittest discover tests
 
-  merge-to-production:
-    if: ${{ github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
+  automerge:
     needs: build
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: production
-      - name: Merge pull request
-        run: |
-          git checkout production
-          git merge --no-ff --no-edit "${{ github.event.pull_request.head.sha }}"
-          git push origin production
+      - name: automerge
+        uses: pascalgn/automerge-action@v0.14.3
+        env:
+          GITHUB_TOKEN: "${{ secrets.AUTO_MERGE_PAT }}"
+          MERGE_LABELS: "automerge"
+          MERGE_REMOVE_LABELS: "automerge"
+          MERGE_METHOD: "squash"
