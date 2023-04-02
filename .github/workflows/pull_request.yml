@@ -1,4 +1,4 @@
-name: Pull Request Test
+name: Test and Merge to Production
 
 on:
   pull_request:
@@ -7,6 +7,9 @@ on:
     types:
       - opened
       - synchronize
+  push:
+    branches:
+      - production
 
 jobs:
   build:
@@ -14,8 +17,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.head_ref }}
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
@@ -24,22 +25,16 @@ jobs:
         run: pip install -r requirements.txt
       - name: Run tests
         run: pytest
-      - name: Check if all tests are passing
-        run: |
-          if [ "$?" -eq 0 ]; then
-            echo "All tests passed!"
-          else
-            echo "Tests failed. Please fix before merging to production."
-            exit 1
-          fi
 
   merge-to-production:
+    if: ${{ github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
     needs: build
-    if: ${{ github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.base.ref == 'production' && github.event.pull_request.merged == true }}
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: production
       - name: Merge pull request
         uses: peter-evans/create-pull-request@v3
         with:
