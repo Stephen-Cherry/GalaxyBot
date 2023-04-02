@@ -5,20 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Bot Production",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/galaxy_bot.py",
-            "args": [
-                "--production"
-            ],
-            "console": "integratedTerminal",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}"
-            }
-        },
-        {
-            "name": "Bot Development",
+            "name": "Bot",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/src/galaxy_bot.py",

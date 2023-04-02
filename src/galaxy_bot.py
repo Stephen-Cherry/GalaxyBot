@@ -12,7 +12,6 @@ Main Components:
 """
 
 import os
-import sys
 import discord
 from dotenv import load_dotenv
 
@@ -23,12 +22,7 @@ def main():
 
     intents = discord.Intents.all()
 
-    os.environ["is_production"] = (
-        "true"
-        if any(arg.lower() in ["--production", "-p"] for arg in sys.argv)
-        else "false"
-    )
-    is_production = os.environ["is_production"] == "true"
+    is_production = os.environ["IS_PRODUCTION"] == "true"
     token = os.environ.get("PRODUCTION_TOKEN" if is_production else "DEVELOPMENT_TOKEN")
 
     if token is None:
