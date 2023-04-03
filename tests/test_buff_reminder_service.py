@@ -12,7 +12,6 @@ import pytz
 
 from src.cogs.buff_reminder_service import (
     BuffReminderService,
-    calculate_buff_due_time,
     get_buff_channel_id,
 )
 
@@ -121,37 +120,6 @@ class TestBuffReminderService(unittest.IsolatedAsyncioTestCase):
 
         await self.buff_reminder_service.before_buff_reminder_task()
         mock_asyncio.sleep.assert_not_called()
-
-    async def test_calculate_buff_due_time(self):
-        """
-        Test the calculate_buff_due_time function.
-
-        This method tests the calculate_buff_due_time function by checking if it
-        correctly calculates the buff due time in UTC based on 12am Central Time
-        of the next day, taking into consideration daylight saving time.
-        """
-        due_time = calculate_buff_due_time()
-
-        central = pytz.timezone("US/Central")
-        now_central = datetime.now(central)
-        tomorrow_central = now_central + timedelta(days=1)
-        tomorrow_12am_central = central.localize(
-            datetime(
-                tomorrow_central.year,
-                tomorrow_central.month,
-                tomorrow_central.day,
-                0,
-                0,
-            )
-        )
-        tomorrow_12am_utc = tomorrow_12am_central.astimezone(pytz.UTC)
-
-        if datetime.now(pytz.UTC) > tomorrow_12am_utc:
-            expected_due_time = tomorrow_12am_utc + timedelta(days=1)
-        else:
-            expected_due_time = tomorrow_12am_utc
-
-        self.assertEqual(due_time, expected_due_time)
 
 
 class TestGetBuffChannelId(unittest.TestCase):

@@ -3,13 +3,10 @@ Buff Reminder Service for Discord
 
 This module provides a Discord bot cog, BuffReminderService, that listens for messages
 containing ':BuffCat:' and sends a response if the cooldown period has passed.
-The cog also calculates the buff due time based on the 12am Central Time of the next day,
-taking into consideration daylight saving time.
 
 The module includes:
 - BuffReminderService: A cog that listens for specific messages and sends a response.
 - setup: A function to add the cog to the bot.
-- calculate_buff_due_time: A function to calculate the buff due time in UTC.
 """
 
 import asyncio
@@ -19,6 +16,8 @@ import discord
 import pytz
 
 from discord.ext import commands, tasks
+
+from src.datetime_helper import calculate_buff_due_time
 
 
 class BuffReminderService(commands.Cog):
@@ -92,31 +91,6 @@ class BuffReminderService(commands.Cog):
 def setup(bot: discord.Bot):
     """Adds cog to the bot"""
     bot.add_cog(BuffReminderService(bot))
-
-
-def calculate_buff_due_time() -> datetime:
-    """
-    Calculate the buff due time in UTC.
-
-    This function calculates the buff due time based on the 12am Central Time of the next day,
-    taking into consideration daylight saving time. The returned datetime is in UTC.
-
-    Returns:
-        datetime: The buff due time in UTC.
-    """
-    central = pytz.timezone("US/Central")
-    now_central = datetime.now(central)
-
-    tomorrow_central = now_central + timedelta(days=1)
-    tomorrow_12am_central = tomorrow_central.replace(
-        hour=0, minute=0, second=0, microsecond=0
-    )
-
-    tomorrow_12am_utc = tomorrow_12am_central.astimezone(pytz.UTC)
-
-    if datetime.now(pytz.UTC) > tomorrow_12am_utc:
-        return tomorrow_12am_utc + timedelta(days=1)
-    return tomorrow_12am_utc
 
 
 def get_buff_channel_id() -> int:
