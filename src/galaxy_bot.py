@@ -12,13 +12,8 @@ Main Components:
 """
 
 import os
-import sys
-from pathlib import Path
 import discord
 from dotenv import load_dotenv
-
-ROOT_DIRECTORY = str(Path(__file__).resolve().parent)
-sys.path.append(ROOT_DIRECTORY)
 
 
 def main():
