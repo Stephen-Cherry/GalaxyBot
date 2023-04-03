@@ -17,7 +17,8 @@ import pytz
 
 from discord.ext import commands, tasks
 
-from src.datetime_helper import calculate_buff_due_time
+
+from datetime_helper import calculate_buff_due_time
 
 
 class BuffReminderService(commands.Cog):
