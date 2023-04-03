@@ -11,9 +11,14 @@ Main Components:
 - on_ready: An event handler for when the bot is ready and connected.
 """
 
+import sys
 import os
+from os import path
 import discord
 from dotenv import load_dotenv
+
+# Add the 'src' directory to the sys.path
+sys.path.append(path.join(path.dirname(path.abspath(__file__)), ".."))
 
 
 def main():
