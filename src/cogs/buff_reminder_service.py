@@ -59,24 +59,29 @@ class BuffReminderService(commands.Cog):
         the task loop is stopped. If the buff channel is not a TextChannel, it
         raises a ValueError.
         """
-        if (
-            DAILY_BUFF_TIME.hour == datetime.utcnow().hour
-            and DAILY_BUFF_TIME.minute == datetime.utcnow().minute
-            and self.cooldown < datetime.utcnow()
-        ):
-            if not self.buffs_renewed_today:
-                channel = self.bot.get_channel(self._buff_channel_id)
-                if isinstance(channel, discord.TextChannel):
-                    await channel.send(
-                        "@here, I have not seen the Buff Cat lately.  "
-                        "Please honor me with its presence if the buffs have been updated."
-                    )
-                    # pylint: disable=no-member
-                    self.buff_reminder_task.stop()
-                else:
-                    raise ValueError("Buff channel did not return as a text channel")
+        if datetime.utcnow() > self.buff_due_time:
+            channel = self.bot.get_channel(self._buff_channel_id)
+            if isinstance(channel, discord.TextChannel):
+                await channel.send(
+                    "@here, I have not seen the Buff Cat lately.  "
+                    "Please honor me with its presence if the buffs have been updated."
+                )
+                # pylint: disable=no-member
+                self.buff_reminder_task.stop()
             else:
-                self.buffs_renewed_today = False
+                raise ValueError("Buff channel did not return as a text channel")
+
+    @buff_reminder_task.before_loop
+    async def before_buff_reminder_task(self):
+        """Wait until the buff due time before starting the buff reminder task loop.
+        This method calculates the time remaining until the buff due time and
+        asynchronously waits for that duration before starting the buff reminder
+        task loop. If the buff due time has already passed, it will not wait and
+        the buff reminder task loop will start immediately.
+        """
+        time_to_wait = (self.buff_due_time - datetime.now(pytz.UTC)).total_seconds()
+        if time_to_wait > 0:
+            await asyncio.sleep(time_to_wait)
 
 
 def setup(bot: discord.Bot):
