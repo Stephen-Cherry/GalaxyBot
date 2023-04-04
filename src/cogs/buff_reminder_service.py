@@ -20,15 +20,6 @@ from discord.ext import commands, tasks
 from src.datetime_helper import calculate_buff_due_time
 
 
-from src.datetime_helper import calculate_buff_due_time
-
-
-from src.datetime_helper import calculate_buff_due_time
-
-
-from src.datetime_helper import calculate_buff_due_time
-
-
 class BuffReminderService(commands.Cog):
     """A cog that sends a response to messages containing ':BuffCat:'
     if the cooldown period has passed."""
