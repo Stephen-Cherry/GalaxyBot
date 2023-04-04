@@ -1,5 +1,9 @@
 {
     "python.formatting.provider": "black",
+    "python.formatting.blackArgs": [
+        "--line-length",
+        "79"
+    ],
     "editor.formatOnSaveMode": "file",
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
@@ -8,4 +12,7 @@
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
     "python.analysis.typeCheckingMode": "basic",
+    "editor.rulers": [
+        79
+    ]
 }
