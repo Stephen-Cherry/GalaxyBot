@@ -1,8 +1,8 @@
 """
 GalaxyBot - A Discord bot with various functionalities.
 
-This module sets up and starts the bot, loading cogs dynamically from the "cogs" directory.
-It supports two environments: production and development, 
+This module sets up and starts the bot, loading cogs dynamically from the 
+"cogs" directory.  It supports two environments: production and development, 
 which can be switched using command-line arguments.
 
 Main Components:
@@ -28,7 +28,9 @@ def main():
     intents = discord.Intents.all()
 
     is_production = os.environ["IS_PRODUCTION"] == "true"
-    token = os.environ.get("PRODUCTION_TOKEN" if is_production else "DEVELOPMENT_TOKEN")
+    token = os.environ.get(
+        "PRODUCTION_TOKEN" if is_production else "DEVELOPMENT_TOKEN"
+    )
 
     if token is None:
         raise ValueError("Token can't be empty")

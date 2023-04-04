@@ -1,13 +1,12 @@
-"""
-A module defining a TypedDict for the response format of the random dog picture API.
-"""
+"""A module defining a TypedDict for the response format of the random dog
+picture API."""
 
 from typing import TypedDict
 
 
 class DoggoResponse(TypedDict):
-    """
-    A TypedDict class representing the response format of the random dog picture API.
+    """A TypedDict class representing the response format of the random dog
+    picture API.
 
     Attributes:
         fileSizeBytes (int): The file size of the dog picture in bytes.

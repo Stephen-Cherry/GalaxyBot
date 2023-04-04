@@ -1,7 +1,5 @@
-"""
-A Discord bot module to send a random weight loss inspiration to a specific channel every day using
-a local json file.
-"""
+"""A Discord bot module to send a random weight loss inspiration to a specific
+channel every day using a local json file."""
 
 from datetime import datetime
 import json
@@ -16,13 +14,11 @@ from src.models.quote import Quote
 
 
 class DailyInspirationService(commands.Cog):
-    """
-    A cog that sends a random weight loss inspiration to a specified channel every day.
-    """
+    """A cog that sends a random weight loss inspiration to a specified channel
+    every day."""
 
     def __init__(self, bot: discord.Bot):
-        """
-        Initialize the DailyInspiration cog.
+        """Initialize the DailyInspiration cog.
 
         :param bot: A discord.Bot instance.
         """
@@ -41,16 +37,15 @@ class DailyInspirationService(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        """
-        When the bot is ready, start the daily_quote_task.
-        """
+        """When the bot is ready, start the daily_quote_task."""
         self.bot.loop.create_task(self.daily_quote_task())
 
     @tasks.loop(time=DAILY_INSPIRATION_TIME)
     async def daily_quote_task(self):
-        """
-        A task that runs every 60 seconds to check if it's time to send a random weight loss
-        quote to the specified channel. If it's time, fetches the quote and sends it.
+        """A task that runs every 60 seconds to check if it's time to send a
+        random weight loss quote to the specified channel.
+
+        If it's time, fetches the quote and sends it.
         """
         if (
             DAILY_INSPIRATION_TIME.hour == datetime.utcnow().hour
@@ -58,8 +53,12 @@ class DailyInspirationService(commands.Cog):
         ):
             channel = self.bot.get_channel(self.weight_loss_channel_id)
             if not isinstance(channel, discord.TextChannel):
-                raise ValueError("Weight loss channel ID is not a text channel")
-            with open("src/data/weight_loss_quotes.json", "r", encoding="utf8") as file:
+                raise ValueError(
+                    "Weight loss channel ID is not a text channel"
+                )
+            with open(
+                "src/data/weight_loss_quotes.json", "r", encoding="utf8"
+            ) as file:
                 data: List[Quote] = json.load(file)
             if data is None:
                 print("Failed to get weight loss quotes")
@@ -78,8 +77,7 @@ class DailyInspirationService(commands.Cog):
 
 
 def setup(bot: commands.Bot):
-    """
-    Add the DailyInspirationService cog to the bot.
+    """Add the DailyInspirationService cog to the bot.
 
     :param bot: A commands.Bot instance.
     """
