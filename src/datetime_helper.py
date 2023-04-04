@@ -1,17 +1,51 @@
 """
 A module containing utility functions to calculate due times for specific events in a Discord bot.
 
-This module provides two functions to calculate due times for events:
+This module provides a primary function to calculate due times for events, 
+along with three wrapper functions:
 
-1. calculate_buff_due_time: 
+calculate_due_time:
+    Calculates the due time for a specific event based on the given hour in Central Time of the next 
+    day.
+calculate_buff_due_time:
     Calculates the buff due time based on the 12am Central Time of the next day.
-2. calculate_daily_doggo_time: 
+calculate_daily_doggo_time:
     Calculates the daily doggo time based on the 10am Central Time of the next day.
+calculate_daily_quote_task:
+    Calculates the daily quote time based on the 9am Central Time of the next day.
 
-Both functions take into consideration daylight saving time and return the due time in UTC.
+All functions take into consideration daylight saving time and return the due time in UTC.
 """
 from datetime import datetime, timedelta
 import pytz
+
+
+def calculate_due_time(hour: int) -> datetime:
+    """
+    Calculate the due time for a specific event in UTC.
+
+    This function calculates the due time based on the specified hour in Central Time of the next
+    day, taking into consideration daylight saving time. The returned datetime is in UTC.
+
+    Args:
+        hour (int): The hour of the event in Central Time.
+
+    Returns:
+        datetime: The due time for the event in UTC.
+    """
+    central = pytz.timezone("US/Central")
+    now_central = datetime.now(central)
+
+    tomorrow_central = now_central + timedelta(days=1)
+    tomorrow_hour_central = tomorrow_central.replace(
+        hour=hour, minute=0, second=0, microsecond=0
+    )
+
+    tomorrow_hour_utc = tomorrow_hour_central.astimezone(pytz.UTC)
+
+    if datetime.now(pytz.UTC) > tomorrow_hour_utc:
+        return tomorrow_hour_utc + timedelta(days=1)
+    return tomorrow_hour_utc
 
 
 def calculate_buff_due_time() -> datetime:
@@ -24,19 +58,7 @@ def calculate_buff_due_time() -> datetime:
     Returns:
         datetime: The buff due time in UTC.
     """
-    central = pytz.timezone("US/Central")
-    now_central = datetime.now(central)
-
-    tomorrow_central = now_central + timedelta(days=1)
-    tomorrow_12am_central = tomorrow_central.replace(
-        hour=0, minute=0, second=0, microsecond=0
-    )
-
-    tomorrow_12am_utc = tomorrow_12am_central.astimezone(pytz.UTC)
-
-    if datetime.now(pytz.UTC) > tomorrow_12am_utc:
-        return tomorrow_12am_utc + timedelta(days=1)
-    return tomorrow_12am_utc
+    return calculate_due_time(0)
 
 
 def calculate_daily_doggo_time() -> datetime:
@@ -49,16 +71,17 @@ def calculate_daily_doggo_time() -> datetime:
     Returns:
         datetime: The daily doggo time in UTC.
     """
-    central = pytz.timezone("US/Central")
-    now_central = datetime.now(central)
+    return calculate_due_time(10)
 
-    tomorrow_central = now_central + timedelta(days=1)
-    tomorrow_10am_central = tomorrow_central.replace(
-        hour=10, minute=0, second=0, microsecond=0
-    )
 
-    tomorrow_10am_utc = tomorrow_10am_central.astimezone(pytz.UTC)
+def calculate_daily_quote_time() -> datetime:
+    """
+    Calculate the daily quote time in UTC.
 
-    if datetime.now(pytz.UTC) > tomorrow_10am_utc:
-        return tomorrow_10am_utc + timedelta(days=1)
-    return tomorrow_10am_utc
+    This function calculates the daily quote time based on the 9am Central Time of the next day,
+    taking into consideration daylight saving time. The returned datetime is in UTC.
+
+    Returns:
+        datetime: The daily quote time in UTC.
+    """
+    return calculate_due_time(9)
