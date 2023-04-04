@@ -75,7 +75,7 @@ class TestBuffReminderService(unittest.IsolatedAsyncioTestCase):
         self.bot.get_channel.return_value = text_channel
         # pylint: disable=W0212
         self.buff_reminder_service._buff_channel_id = 12345
-        self.buff_reminder_service.buff_due_time = datetime.utcnow() - timedelta(
+        self.buff_reminder_service.buff_due_time = datetime.now(pytz.UTC) - timedelta(
             minutes=1
         )
 
