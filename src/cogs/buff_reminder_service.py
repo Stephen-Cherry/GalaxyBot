@@ -9,15 +9,12 @@ The module includes:
 - setup: A function to add the cog to the bot.
 """
 
-import asyncio
 from datetime import datetime, timedelta
 import os
 import discord
-import pytz
 
 from discord.ext import commands, tasks
-
-from src.datetime_helper import calculate_buff_due_time
+from src.constants.constants import DAILY_BUFF_TIME
 
 
 class BuffReminderService(commands.Cog):
@@ -27,7 +24,7 @@ class BuffReminderService(commands.Cog):
     def __init__(self, bot: discord.Bot):
         self.bot = bot
         self.cooldown: datetime = datetime.min
-        self.buff_due_time: datetime = calculate_buff_due_time()
+        self.buffs_renewed_today: bool = False
         self._buff_channel_id: int = get_buff_channel_id()
         # pylint: disable=no-member
         self.buff_reminder_task.start()
@@ -46,13 +43,12 @@ class BuffReminderService(commands.Cog):
         if ":BuffCat:" in message.content and self.cooldown < datetime.utcnow():
             await message.channel.send("Praise be to the Buff Cat!")
             self.cooldown = datetime.utcnow() + timedelta(hours=12)
-            self.buff_due_time += timedelta(days=1)
             # pylint: disable=no-member
             if self.buff_reminder_task.is_running():
                 self.buff_reminder_task.cancel()
             self.buff_reminder_task.restart()
 
-    @tasks.loop(seconds=60)
+    @tasks.loop(time=DAILY_BUFF_TIME)
     async def buff_reminder_task(self):
         """Periodically check if the buff due time has passed and send a reminder message.
 
@@ -63,29 +59,24 @@ class BuffReminderService(commands.Cog):
         the task loop is stopped. If the buff channel is not a TextChannel, it
         raises a ValueError.
         """
-        if datetime.now(pytz.UTC) > self.buff_due_time:
-            channel = self.bot.get_channel(self._buff_channel_id)
-            if isinstance(channel, discord.TextChannel):
-                await channel.send(
-                    "@here, I have not seen the Buff Cat lately.  "
-                    "Please honor me with its presence if the buffs have been updated."
-                )
-                # pylint: disable=no-member
-                self.buff_reminder_task.stop()
+        if (
+            DAILY_BUFF_TIME.hour == datetime.utcnow().hour
+            and DAILY_BUFF_TIME.minute == datetime.utcnow().minute
+            and self.cooldown < datetime.utcnow()
+        ):
+            if not self.buffs_renewed_today:
+                channel = self.bot.get_channel(self._buff_channel_id)
+                if isinstance(channel, discord.TextChannel):
+                    await channel.send(
+                        "@here, I have not seen the Buff Cat lately.  "
+                        "Please honor me with its presence if the buffs have been updated."
+                    )
+                    # pylint: disable=no-member
+                    self.buff_reminder_task.stop()
+                else:
+                    raise ValueError("Buff channel did not return as a text channel")
             else:
-                raise ValueError("Buff channel did not return as a text channel")
-
-    @buff_reminder_task.before_loop
-    async def before_buff_reminder_task(self):
-        """Wait until the buff due time before starting the buff reminder task loop.
-        This method calculates the time remaining until the buff due time and
-        asynchronously waits for that duration before starting the buff reminder
-        task loop. If the buff due time has already passed, it will not wait and
-        the buff reminder task loop will start immediately.
-        """
-        time_to_wait = (self.buff_due_time - datetime.now(pytz.UTC)).total_seconds()
-        if time_to_wait > 0:
-            await asyncio.sleep(time_to_wait)
+                self.buffs_renewed_today = False
 
 
 def setup(bot: discord.Bot):
