@@ -63,7 +63,7 @@ class BuffReminderService(commands.Cog):
         the task loop is stopped. If the buff channel is not a TextChannel, it
         raises a ValueError.
         """
-        if datetime.utcnow() > self.buff_due_time:
+        if datetime.now(pytz.UTC) > self.buff_due_time:
             channel = self.bot.get_channel(self._buff_channel_id)
             if isinstance(channel, discord.TextChannel):
                 await channel.send(
