@@ -107,7 +107,7 @@ def get_buff_channel_id() -> int:
         ValueError: If the Buff Channel ID is not found in environment
         variables.
     """
-    is_production = os.environ.get("is_production") == "true"
+    is_production = os.environ.get("IS_PRODUCTION") == "true"
     if is_production is None:
         raise ValueError(
             "Production boolean not found in Environment Variables"
