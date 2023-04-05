@@ -52,6 +52,7 @@ class BuffReminderService(commands.Cog):
             if self.buff_reminder_task.is_running():
                 self.buff_reminder_task.cancel()
             self.buff_reminder_task.restart()
+            self.buffs_renewed_today = True
 
     @tasks.loop(time=DAILY_BUFF_TIME)
     async def buff_reminder_task(self):
