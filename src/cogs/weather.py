@@ -1,6 +1,8 @@
 """File holding the Cog for weather commands."""
 from typing import List
 import discord
+
+# pylint: disable=no-name-in-module
 from discord import Option
 from discord.ext import commands
 import aiohttp
@@ -46,7 +48,7 @@ class WeatherCog(commands.Cog):
         weather_now = data["current"]
         embed = discord.Embed(
             title=(
-                f"Current weather in {data['location']['name']}, "
+                f"Current weather in a location within: "
                 f"{data['location']['region']}, "
                 f"{data['location']['country']}"
             ),
@@ -104,7 +106,7 @@ class WeatherCog(commands.Cog):
 
             embed = discord.Embed(
                 title=(
-                    f"{forecast_day['date']} forecast in {data['location']['name']}, "
+                    f"{forecast_day['date']} forecast for a location within: "
                     f"{data['location']['region']}, "
                     f"{data['location']['country']}"
                 ),
