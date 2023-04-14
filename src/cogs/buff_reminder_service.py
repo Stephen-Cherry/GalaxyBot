@@ -50,8 +50,6 @@ class BuffReminderService(commands.Cog):
             await message.channel.send("Praise be to the Buff Cat!")
             self.cooldown = datetime.utcnow() + timedelta(hours=12)
             # pylint: disable=no-member
-            if self.buff_reminder_task.is_running():
-                self.buff_reminder_task.cancel()
             self.buff_reminder_task.restart()
 
     @tasks.loop(time=DAILY_BUFF_TIME)
@@ -71,6 +69,8 @@ class BuffReminderService(commands.Cog):
             datetime.utcnow().hour == DAILY_BUFF_TIME.hour
             and datetime.utcnow().minute == DAILY_BUFF_TIME.minute
         ):
+            # pylint: disable=no-member
+            self.buff_reminder_task.stop()
             if self.buffs_renewed_today:
                 self.buffs_renewed_today = False
             else:
@@ -81,8 +81,6 @@ class BuffReminderService(commands.Cog):
                         "Please honor me with its presence if the buffs have"
                         "been updated."
                     )
-                    # pylint: disable=no-member
-                    self.buff_reminder_task.stop()
                 else:
                     raise ValueError(
                         "Buff channel did not return as a text channel"
