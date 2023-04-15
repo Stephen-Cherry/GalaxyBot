@@ -45,6 +45,11 @@ def main():
     load_cogs(bot)
     bot.run(token)
 
+    @bot.event
+    async def on_message():
+        """Bot OnMessage Event. Removed default message handling.
+        Cogs will handle messages."""
+
 
 def load_cogs(bot, cogs_dir="cogs"):
     """Load all cogs from the specified directory."""
