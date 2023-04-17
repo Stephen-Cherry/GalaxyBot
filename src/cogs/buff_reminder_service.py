@@ -78,7 +78,7 @@ class BuffReminderService(commands.Cog):
                 if isinstance(channel, discord.TextChannel):
                     await channel.send(
                         "@here, I have not seen the Buff Cat lately.  "
-                        "Please honor me with its presence if the buffs have"
+                        "Please honor me with its presence if the buffs have "
                         "been updated."
                     )
                 else:
