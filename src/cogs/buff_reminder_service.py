@@ -49,8 +49,6 @@ class BuffReminderService(commands.Cog):
             self.buffs_renewed_today = True
             await message.channel.send("Praise be to the Buff Cat!")
             self.cooldown = datetime.utcnow() + timedelta(hours=12)
-            # pylint: disable=no-member
-            self.buff_reminder_task.restart()
 
     @tasks.loop(time=DAILY_BUFF_TIME)
     async def buff_reminder_task(self):
@@ -69,8 +67,6 @@ class BuffReminderService(commands.Cog):
             datetime.utcnow().hour == DAILY_BUFF_TIME.hour
             and datetime.utcnow().minute == DAILY_BUFF_TIME.minute
         ):
-            # pylint: disable=no-member
-            self.buff_reminder_task.stop()
             if self.buffs_renewed_today:
                 self.buffs_renewed_today = False
             else:
