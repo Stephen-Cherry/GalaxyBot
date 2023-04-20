@@ -22,11 +22,8 @@ class DailyAnimalService(commands.Cog):
         :param bot: A discord.Bot instance.
         """
         self.bot = bot
-        is_production = os.environ.get("IS_PRODUCTION") == "true"
         general_channel_id = os.environ.get(
-            "PRODUCTION_GENERAL_CHANNEL"
-            if is_production
-            else "DEVELOPMENT_GENERAL_CHANNEL"
+            "PICS_N_VIDS_CHANNEL"
         )
         if general_channel_id is None:
             raise ValueError("General channel ID is not set")

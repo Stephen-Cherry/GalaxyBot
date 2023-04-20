@@ -27,9 +27,8 @@ def main():
 
     intents = discord.Intents.all()
 
-    is_production = os.environ["IS_PRODUCTION"] == "true"
     token = os.environ.get(
-        "PRODUCTION_TOKEN" if is_production else "DEVELOPMENT_TOKEN"
+            "TOKEN"
     )
 
     if token is None:
