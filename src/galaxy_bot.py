@@ -27,9 +27,7 @@ def main():
 
     intents = discord.Intents.all()
 
-    token = os.environ.get(
-            "TOKEN"
-    )
+    token = os.environ.get("TOKEN")
 
     if token is None:
         raise ValueError("Token can't be empty")

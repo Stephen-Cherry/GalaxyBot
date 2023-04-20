@@ -102,9 +102,7 @@ def get_buff_channel_id() -> int:
         ValueError: If the Buff Channel ID is not found in environment
         variables.
     """
-    channel_id = os.environ.get(
-        "BUFF_CHANNEL"
-    )
+    channel_id = os.environ.get("BUFF_CHANNEL")
     if channel_id:
         return int(channel_id)
     raise ValueError("Could not find Buff Channel ID in Environment Variables")
