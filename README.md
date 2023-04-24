@@ -1,11 +1,10 @@
 # GalaxyBotv2
 
-GalaxyBotv2 is a Discord bot with various functionalities. It's designed to be versatile and dynamically loads "cogs" (modules) to extend its capabilities. The bot can operate in two environments: production and development, which can be switched using environmental variables.
+GalaxyBotv2 is a Discord bot with various functionalities. It's designed to be versatile and dynamically loads "cogs" (modules) to extend its capabilities.
 
 ## Features
 
 - Dynamic loading of cogs from the "cogs" directory
-- Support for production and development environments
 - Easy configuration using environment variables
 
 ## Setup
@@ -13,10 +12,10 @@ GalaxyBotv2 is a Discord bot with various functionalities. It's designed to be v
 1. Clone the repository to your local machine.
 2. Install the required dependencies by running `pip install -r requirements.txt`.
 3. Create a `.env` file in the root directory of the project with the following variables:
-- IS_PRODUCTION=true_or_false
-- PRODUCTION_TOKEN=your_production_bot_token
-- DEVELOPMENT_TOKEN=your_development_bot_token
-4. Replace `true_or_false` with `true` for the production environment or `false` for the development environment. Replace `your_production_bot_token` and `your_development_bot_token` with your respective Discord bot tokens.
+- BUFF_CHANNEL -> Channel to track buff notifications
+- PICS_N_VIDS_CHANNEL -> Channel for picture and video related content
+- TOKEN -> Bot token
+- WEATHER_API_KEY -> API Key for the www.weatherapi.com
 5. Run the bot by executing `python galaxy_bot.py`.
 
 ## Adding Cogs

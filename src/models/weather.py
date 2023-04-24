@@ -1,10 +1,7 @@
-"""Data models for weather API responses."""
 from typing import List, TypedDict
 
 
 class Location(TypedDict):
-    """Location data model."""
-
     name: str
     region: str
     country: str
@@ -16,16 +13,12 @@ class Location(TypedDict):
 
 
 class Condition(TypedDict):
-    """Condition data model."""
-
     text: str
     icon: str
     code: int
 
 
 class Day(TypedDict):
-    """Day data model."""
-
     maxtemp_c: float
     maxtemp_f: float
     mintemp_c: float
@@ -49,8 +42,6 @@ class Day(TypedDict):
 
 
 class Astro(TypedDict):
-    """Astro data model."""
-
     sunrise: str
     sunset: str
     moonrise: str
@@ -62,8 +53,6 @@ class Astro(TypedDict):
 
 
 class Hour(TypedDict):
-    """Hour data model."""
-
     time_epoch: int
     time: str
     temp_c: float
@@ -100,8 +89,6 @@ class Hour(TypedDict):
 
 
 class ForecastDay(TypedDict):
-    """Forecast day data model."""
-
     date: str
     date_epoch: int
     day: Day
@@ -110,8 +97,6 @@ class ForecastDay(TypedDict):
 
 
 class Current(TypedDict):
-    """Current data model."""
-
     last_updated_epoch: int
     last_updated: str
     temp_c: float
@@ -138,14 +123,10 @@ class Current(TypedDict):
 
 
 class Forecast(TypedDict):
-    """Forecast data model."""
-
     forecastday: List[ForecastDay]
 
 
 class Weather(TypedDict):
-    """Weather data model."""
-
     location: Location
     current: Current
     forecast: Forecast

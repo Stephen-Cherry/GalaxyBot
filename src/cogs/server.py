@@ -1,10 +1,8 @@
-"""File holding the Cog for GitHub commands."""
 import discord
 from discord.ext import commands
 
 
 class ServerCog(commands.Cog):
-    """Github Commands Cog."""
 
     def __init__(self, bot: discord.Bot):
         self.bot = bot
@@ -12,7 +10,7 @@ class ServerCog(commands.Cog):
     @commands.slash_command(
         name="server", description="Get information about the current server"
     )
-    async def server(self, ctx: discord.ApplicationContext):
+    async def server(self, ctx: discord.ApplicationContext) -> None:
         """Server Command."""
 
         if ctx.guild is None:
@@ -49,6 +47,5 @@ class ServerCog(commands.Cog):
         await ctx.respond(embed=embed, ephemeral=True)
 
 
-def setup(bot: discord.Bot):
-    """Adds cog to the bot."""
+def setup(bot: discord.Bot) -> None:
     bot.add_cog(ServerCog(bot))
