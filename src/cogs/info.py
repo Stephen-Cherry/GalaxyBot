@@ -1,10 +1,8 @@
-"""File holding the Cog for GitHub commands."""
 import discord
 from discord.ext import commands
 
 
 class InfoCog(commands.Cog):
-    """Github Commands Cog."""
 
     def __init__(self, bot: discord.Bot) -> None:
         self.bot = bot
@@ -16,7 +14,6 @@ class InfoCog(commands.Cog):
     async def info(
         self, ctx: discord.ApplicationContext, user: discord.Member
     ) -> None:
-        """Info Command."""
         user = user or ctx.author
         avatar_url = user.avatar.url if user.avatar else ""
         embed = discord.Embed()
@@ -52,5 +49,4 @@ class InfoCog(commands.Cog):
 
 
 def setup(bot: discord.Bot) -> None:
-    """Adds cog to the bot."""
     bot.add_cog(InfoCog(bot))

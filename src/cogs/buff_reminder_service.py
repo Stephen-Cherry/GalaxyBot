@@ -1,15 +1,3 @@
-"""Buff Reminder Service for Discord.
-
-This module provides a Discord bot cog, BuffReminderService, that listens for 
-messages containing ':BuffCat:' and sends a response if the cooldown period has 
-passed.
-
-The module includes:
-- BuffReminderService: A cog that listens for specific messages and sends a 
-response.
-- setup: A function to add the cog to the bot.
-"""
-
 from datetime import datetime, timedelta
 import os
 import discord
@@ -19,8 +7,6 @@ from src.constants.constants import DAILY_BUFF_TIME
 
 
 class BuffReminderService(commands.Cog):
-    """A cog that sends a response to messages containing ':BuffCat:' if the
-    cooldown period has passed."""
 
     def __init__(self, bot: discord.Bot):
         self.bot = bot
@@ -31,17 +17,7 @@ class BuffReminderService(commands.Cog):
         self.buff_reminder_task.start()
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
-        """Listener for incoming messages containing ':BuffCat:'.
-
-        This method listens for messages containing ':BuffCat:' and sends a
-        response if the cooldown period has passed. It updates the cooldown
-        after sending a response.
-
-        Args:
-            message (discord.Message): The message object containing the
-            message data.
-        """
+    async def on_message(self, message: discord.Message) -> None:
         if (
             ":BuffCat:" in message.content
             and self.cooldown < datetime.utcnow()
@@ -51,18 +27,7 @@ class BuffReminderService(commands.Cog):
             self.cooldown = datetime.utcnow() + timedelta(hours=12)
 
     @tasks.loop(time=DAILY_BUFF_TIME)
-    async def buff_reminder_task(self):
-        """Periodically check if the buff due time has passed and send a
-        reminder message.
-
-        This method is a pycord tasks loop that runs every 60 seconds.
-        It checks if the current UTC time has passed the buff due time.
-        If so, it retrieves the buff channel using the stored channel ID
-        and sends a reminder message to the channel, indicating that the
-        buff is due. After sending the message, the task loop is
-        stopped. If the buff channel is not a TextChannel, it raises a
-        ValueError.
-        """
+    async def buff_reminder_task(self) -> None:
         if (
             datetime.utcnow().hour == DAILY_BUFF_TIME.hour
             and datetime.utcnow().minute == DAILY_BUFF_TIME.minute
@@ -83,25 +48,11 @@ class BuffReminderService(commands.Cog):
                     )
 
 
-def setup(bot: discord.Bot):
-    """Adds cog to the bot."""
+def setup(bot: discord.Bot) -> None:
     bot.add_cog(BuffReminderService(bot))
 
 
 def get_buff_channel_id() -> int:
-    """Get the Buff Channel ID from environment variables.
-
-    This function retrieves the Buff Channel ID from environment variables
-    based on whether the bot is running in production or development mode.
-    It raises a ValueError if the channel ID is not found.
-
-    Returns:
-        int: The Buff Channel ID as an integer.
-
-    Raises:
-        ValueError: If the Buff Channel ID is not found in environment
-        variables.
-    """
     channel_id = os.environ.get("BUFF_CHANNEL")
     if channel_id:
         return int(channel_id)

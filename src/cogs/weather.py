@@ -1,4 +1,3 @@
-"""File holding the Cog for weather commands."""
 from typing import List
 import discord
 
@@ -12,13 +11,11 @@ from src.models.weather import Weather
 
 
 class WeatherCog(commands.Cog):
-    """Weather Commands Cog."""
 
     def __init__(self, bot: discord.Bot) -> None:
         self.bot = bot
 
     async def fetch_weather_data(self, location: str) -> Weather:
-        """Fetches weather data from the API."""
         url = (
             f"{WEATHER_API_BASE_URL}forecast.json?key={WEATHER_API_KEY}"
             f"&q={location}&days=3&aqi=no&alerts=no"
@@ -43,7 +40,6 @@ class WeatherCog(commands.Cog):
         ),
         hide: bool = False,
     ):
-        """Get the current weather."""
         data: Weather = await self.fetch_weather_data(location)
         weather_now = data["current"]
         embed = discord.Embed(
@@ -93,7 +89,6 @@ class WeatherCog(commands.Cog):
         ),
         hide: bool = False,
     ):
-        """Get the weather forecast for the next 3 days."""
         data: Weather = await self.fetch_weather_data(location)
         embeds: List[discord.Embed] = []
 
@@ -129,5 +124,4 @@ class WeatherCog(commands.Cog):
 
 
 def setup(bot: discord.Bot) -> None:
-    """Adds cog to the bot."""
     bot.add_cog(WeatherCog(bot))

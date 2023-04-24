@@ -1,5 +1,3 @@
-"""Constants for the bot."""
-
 from datetime import time
 import os
 
