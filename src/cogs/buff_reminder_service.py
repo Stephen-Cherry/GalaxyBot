@@ -5,6 +5,8 @@ import discord
 from discord.ext import commands, tasks
 from src.constants.constants import DAILY_BUFF_TIME
 
+renewal_hours = [number for number in range(0,11)]
+renewal_hours.extend([22,23])
 
 class BuffReminderService(commands.Cog):
     def __init__(self, bot: discord.Bot):
@@ -22,7 +24,7 @@ class BuffReminderService(commands.Cog):
             and self.cooldown < datetime.utcnow()
         ):
             current_hour = datetime.utcnow().hour
-            if current_hour in range(17, 24) or current_hour in range(0, 4):
+            if current_hour in renewal_hours:
                 self.buffs_renewed_today = True
             await message.channel.send("Praise be to the Buff Cat!")
             self.cooldown = datetime.utcnow() + timedelta(hours=12)
