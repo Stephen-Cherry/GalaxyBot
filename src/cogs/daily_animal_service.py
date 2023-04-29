@@ -9,7 +9,6 @@ from src.models.animal_responses import Doggo, Cat
 
 
 class DailyAnimalService(commands.Cog):
-
     def __init__(self, bot: discord.Bot):
         self.bot = bot
         general_channel_id = os.environ.get("PICS_N_VIDS_CHANNEL")

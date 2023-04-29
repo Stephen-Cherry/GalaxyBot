@@ -29,6 +29,7 @@ def main():
     load_cogs(bot)
     bot.run(token)
 
+
 def load_cogs(bot, cogs_dir="cogs"):
     main_script_dir = os.path.dirname(os.path.abspath(__file__))
     cogs_abs_path = os.path.join(main_script_dir, cogs_dir)

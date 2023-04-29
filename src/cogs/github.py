@@ -3,7 +3,6 @@ from discord.ext import commands
 
 
 class GithubCog(commands.Cog):
-
     def __init__(self, bot: discord.Bot) -> None:
         self.bot = bot
 

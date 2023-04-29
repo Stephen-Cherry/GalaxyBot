@@ -11,7 +11,6 @@ from src.models.weather import Weather
 
 
 class WeatherCog(commands.Cog):
-
     def __init__(self, bot: discord.Bot) -> None:
         self.bot = bot
 
