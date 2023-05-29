@@ -22,9 +22,6 @@ def main():
     async def on_ready():
         print(f"We have logged in as {bot.user}")
 
-    @bot.event
-    async def on_message():
-        pass
 
     load_cogs(bot)
     bot.run(token)

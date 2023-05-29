@@ -1,7 +1,6 @@
 from datetime import time
 import os
 
-DAILY_ANIMAL_TIME = time(15)
 DAILY_INSPIRATION_TIME = time(14)
 DAILY_BUFF_TIME = time(5)
 WEATHER_API_BASE_URL = "http://api.weatherapi.com/v1/"
