@@ -1,0 +1,24 @@
+{
+  "name": "galaxybotv2",
+  "version": "1.0.0",
+  "description": "GalaxyBotv2 is a Discord bot with various functionalities. It's designed to be versatile and dynamically loads \"cogs\" (modules) to extend its capabilities.",
+  "main": "/prod/index.js",
+  "scripts": {
+    "build": "tsc --outDir ./prod",
+    "start": "node -r dotenv/config ./prod/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.11.0",
+    "dotenv": "^16.3.1",
+    "node-cron": "^3.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.3.1",
+    "@types/node-cron": "^3.0.8",
+    "eslint": "^8.43.0",
+    "typescript": "^5.1.3"
+  }
+}
