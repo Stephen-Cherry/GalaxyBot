@@ -27,9 +27,8 @@ jobs:
       - name: Deploy via SFTP
         uses: SamKirkland/FTP-Deploy-Action@v3.1.2
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          port: ${{ secrets.FTP_PORT }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          ftp-server: ${{ secrets.FTP_SERVER }}
+          ftp-username: ${{ secrets.FTP_USERNAME }}
+          ftp-password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
-          server-dir: /
+          remote-dir: /
