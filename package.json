@@ -5,7 +5,7 @@
   "main": "/prod/index.js",
   "scripts": {
     "build": "tsc --outDir ./prod",
-    "start": "node -r dotenv/config ./prod/index.js"
+    "start": "node ./prod/index.js"
   },
   "keywords": [],
   "author": "",

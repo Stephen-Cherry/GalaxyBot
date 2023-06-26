@@ -4,6 +4,7 @@ import { onInteraction } from "./events/onInteraction";
 import { onMessage } from "./events/onMessage";
 import { onReady } from "./events/onReady";
 import { validateEnv } from "./utils/ValidateEnv";
+import "dotenv/config";
 
 (async () => {
   if (!validateEnv) return;
