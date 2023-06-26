@@ -1,5 +1,5 @@
 import { Client, Message, TextChannel } from "discord.js";
-import cron from "node-cron";
+var cron = require("node-cron");
 
 export class BuffService {
   static validHours: number[] = [0, 1, 2, 3, 4];
