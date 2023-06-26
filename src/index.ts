@@ -7,7 +7,8 @@ import { validateEnv } from "./utils/validateEnv";
 import "dotenv/config";
 
 (async () => {
-  if (!validateEnv) return;
+  validateEnv();
+
   const client = new Client({ intents: IntentOptions });
 
   client.once(Events.ClientReady, async (client) => {
