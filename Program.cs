@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 IHost host = Host.CreateDefaultBuilder(args)
-.UseEnvironment("Development")
 .ConfigureAppConfiguration((hostingContext, configuration) =>
 {
     if (hostingContext.HostingEnvironment.IsDevelopment())
