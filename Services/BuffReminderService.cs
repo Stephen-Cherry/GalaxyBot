@@ -19,42 +19,48 @@ public class BuffReminderService
     {
         Task.Run(async () =>
         {
-
             TimeSpan delay = executionTime.Subtract(DateTime.UtcNow);
 
             if (delay.TotalMilliseconds > 0)
             {
                 await Task.Delay(delay);
             }
-            if (hasUpdated)
-            {
-                hasUpdated = false;
-            }
-            else
-            {
-                if (!ulong.TryParse(_configuration.GetValue<string>("BuffChannelId"), out var buffChannelId))
-                {
-                    throw new Exception("Missing BuffChannelId environment variale");
-                }
-
-                if (_client.GetChannel(buffChannelId) is not SocketTextChannel buffChannel)
-                {
-                    throw new Exception("Could not find a channel with the id provided" + buffChannelId);
-                }
-
-                await buffChannel.SendMessageAsync("@here, I have not seen the Buff Cat lately.  Please honor me with its presence if the buffs have been updated.");
-            }
+            await RunJob();
             ScheduleJob(executionTime.AddDays(1));
         });
     }
 
+    private async Task RunJob()
+    {
+        if (hasUpdated)
+        {
+            hasUpdated = false;
+        }
+        else
+        {
+            if (!ulong.TryParse(_configuration.GetValue<string>("BuffChannelId"), out var buffChannelId))
+            {
+                throw new Exception("Missing BuffChannelId environment variable");
+            }
+
+            if (_client.GetChannel(buffChannelId) is not SocketTextChannel buffChannel)
+            {
+                throw new Exception("Could not find a channel with the id provided" + buffChannelId);
+            }
+
+            await buffChannel.SendMessageAsync("@here, I have not seen the Buff Cat lately.  Please honor me with its presence if the buffs have been updated.");
+        }
+    }
     private Task HandleMessage(SocketMessage userMessage)
     {
         if (userMessage.CleanContent.Contains(":BuffCat:")
             && !userMessage.Author.IsBot)
         {
             userMessage.Channel.SendMessageAsync("Praise be to the buff cat!");
-            if (validUpdateHours.Contains(DateTime.UtcNow.Hour)) hasUpdated = true;
+            if (validUpdateHours.Contains(DateTime.UtcNow.Hour))
+            {
+                hasUpdated = true;
+            }
         }
         return Task.CompletedTask;
     }
