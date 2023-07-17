@@ -3,7 +3,6 @@ using Discord.WebSocket;
 using GalaxyBot.Extensions;
 using GalaxyBot.Handlers;
 using GalaxyBot.Services;
-using GalaxyBot.SlashCommands;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -13,7 +12,6 @@ namespace GalaxyBot;
 public class Bot
 {
     private readonly IHost _host;
-    private static readonly List<string> _commandList = new() { "source", "help" };
 
     public Bot(string[] args)
     {
@@ -32,26 +30,15 @@ public class Bot
     {
         DiscordSocketClient client = _host.Services.GetRequiredService<DiscordSocketClient>();
         BuffReminderService buffReminderService = _host.Services.GetRequiredService<BuffReminderService>();
-        SlashCommandHandler slashCommandHandler = _host.Services.GetRequiredService<SlashCommandHandler>();
+        InteractionHandler interactionHandler = _host.Services.GetRequiredService<InteractionHandler>();
 
         string token = _host.Services.GetRequiredService<IConfiguration>().GetValue<string>("DiscordToken")
                        ?? throw new Exception("Missing token");
 
         client.Ready += async () =>
         {
-            Console.WriteLine("Clearing Unsupported Commands");
-            var commands = await client.GetGlobalApplicationCommandsAsync();
-            foreach (var command in commands)
-            {
-                if (!_commandList.Contains(command.Name))
-                {
-                    await command.DeleteAsync();
-                }
-            }
-
             Console.WriteLine("Registering Commands");
-            await client.CreateGlobalApplicationCommandAsync(Source.CreateCommand());
-            await client.CreateGlobalApplicationCommandAsync(Help.CreateCommand());
+            await interactionHandler.InitializeAsync();
 
             Console.WriteLine($"Successfully logged in as {client.CurrentUser.Username}");
         };

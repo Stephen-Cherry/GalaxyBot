@@ -1,21 +1,12 @@
-using Discord;
-using Discord.WebSocket;
+using Discord.Interactions;
 
 namespace GalaxyBot.SlashCommands;
 
-public class Help : ISlashCommand
+public class Help : InteractionModuleBase<SocketInteractionContext>
 {
-    public static SlashCommandProperties? CreateCommand()
+    [SlashCommand("help", "Responds with a link to the wiki for GalaxyBot.")]
+    public async Task Command()
     {
-        return new SlashCommandBuilder()
-        .WithName("help")
-        .WithDescription("Responds with a link to the wiki for GalaxyBot.")
-        .Build();
-
-    }
-
-    public static async Task RunCommand(SocketSlashCommand command)
-    {
-        await command.RespondAsync("https://github.com/Narolith/GalaxyBotv2/wiki");
+        await RespondAsync("https://github.com/Narolith/GalaxyBotv2/wiki");
     }
 }

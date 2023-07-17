@@ -40,7 +40,7 @@ public static class HostBuilderExtensions
                 .AddSingleton<InteractionService>()
                 .AddSingleton<LoggingService>()
                 .AddSingleton<BuffReminderService>()
-                .AddSingleton<SlashCommandHandler>();
+                .AddSingleton<InteractionHandler>();
         });
     }
 }
