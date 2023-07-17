@@ -37,7 +37,8 @@ public class SlashCommandHandler
     {
         return new Dictionary<string, Func<SocketSlashCommand, Task>>()
         {
-            {"source", Source.RunCommand}
+            {"source", Source.RunCommand},
+            {"help", Help.RunCommand},
         };
     }
 }

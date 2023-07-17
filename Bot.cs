@@ -13,7 +13,7 @@ namespace GalaxyBot;
 public class Bot
 {
     private readonly IHost _host;
-    private static readonly List<string> _commandList = new() { "source" };
+    private static readonly List<string> _commandList = new() { "source", "help" };
 
     public Bot(string[] args)
     {
@@ -51,6 +51,7 @@ public class Bot
 
             Console.WriteLine("Registering Commands");
             await client.CreateGlobalApplicationCommandAsync(Source.CreateCommand());
+            await client.CreateGlobalApplicationCommandAsync(Help.CreateCommand());
 
             Console.WriteLine($"Successfully logged in as {client.CurrentUser.Username}");
         };
