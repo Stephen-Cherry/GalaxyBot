@@ -4,10 +4,13 @@ using Microsoft.Extensions.Configuration;
 namespace GalaxyBot.Services;
 public class BuffReminderService
 {
-    private static readonly List<int> validUpdateHours = new() { 0, 1, 2, 3, 4 };
+    private static readonly List<int> validUpdateHoursUtc = new() { 0, 1, 2, 3, 4 };
     private static bool hasUpdated = false;
     private readonly DiscordSocketClient _client;
     private readonly IConfiguration _configuration;
+    private readonly string BUFF_CHANNEL_KEY = "BuffChannelId";
+    private readonly string BUFF_CAT_EMOTE = ":BuffCat:";
+
     public BuffReminderService(DiscordSocketClient client, IConfiguration configuration)
     {
         _client = client;
@@ -20,8 +23,9 @@ public class BuffReminderService
         Task.Run(async () =>
         {
             TimeSpan delay = executionTime.Subtract(DateTime.UtcNow);
+            bool hasDelayRemaining = delay.TotalMilliseconds > 0;
 
-            if (delay.TotalMilliseconds > 0)
+            if (hasDelayRemaining)
             {
                 await Task.Delay(delay);
             }
@@ -38,7 +42,8 @@ public class BuffReminderService
         }
         else
         {
-            if (!ulong.TryParse(_configuration.GetValue<string>("BuffChannelId"), out var buffChannelId))
+            bool isValidBuffChannelId = !ulong.TryParse(_configuration.GetValue<string>(BUFF_CHANNEL_KEY), out var buffChannelId);
+            if (!isValidBuffChannelId)
             {
                 throw new Exception("Missing BuffChannelId environment variable");
             }
@@ -53,11 +58,14 @@ public class BuffReminderService
     }
     private Task HandleMessage(SocketMessage userMessage)
     {
-        if (userMessage.CleanContent.Contains(":BuffCat:")
-            && !userMessage.Author.IsBot)
+        bool hasBuffCat = userMessage.CleanContent.Contains(BUFF_CAT_EMOTE);
+        bool isBot = userMessage.Author.IsBot;
+        if (hasBuffCat
+            && !isBot)
         {
             userMessage.Channel.SendMessageAsync("Praise be to the buff cat!");
-            if (validUpdateHours.Contains(DateTime.UtcNow.Hour))
+            bool isUpdateHour = validUpdateHoursUtc.Contains(DateTime.UtcNow.Hour);
+            if (isUpdateHour)
             {
                 hasUpdated = true;
             }

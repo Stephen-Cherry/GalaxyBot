@@ -1,15 +1,13 @@
 using Discord;
 using Discord.Commands;
-using Discord.Interactions;
 using Discord.WebSocket;
 
 namespace GalaxyBot.Services;
 public class LoggingService
 {
-    public LoggingService(DiscordSocketClient client, InteractionService interactionService)
+    public LoggingService(DiscordSocketClient client)
     {
         client.Log += LogAsync;
-        interactionService.Log += LogAsync;
     }
 
     private Task LogAsync(LogMessage message)
