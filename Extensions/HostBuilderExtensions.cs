@@ -1,6 +1,7 @@
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
+using GalaxyBot.Handlers;
 using GalaxyBot.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,7 +39,8 @@ public static class HostBuilderExtensions
                 .AddSingleton(new InteractionServiceConfig())
                 .AddSingleton<InteractionService>()
                 .AddSingleton<LoggingService>()
-                .AddSingleton<BuffReminderService>();
+                .AddSingleton<BuffReminderService>()
+                .AddSingleton<SlashCommandHandler>();
         });
     }
 }
