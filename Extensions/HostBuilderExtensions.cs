@@ -13,6 +13,7 @@ namespace GalaxyBot.Extensions;
 
 public static class HostBuilderExtensions
 {
+    private static readonly string _connString = "GalaxyBotDatabase";
     public static IHostBuilder SetAppConfiguration(this IHostBuilder hostBuilder)
     {
         return hostBuilder.ConfigureAppConfiguration((hostingContext, configuration) =>
@@ -30,10 +31,13 @@ public static class HostBuilderExtensions
 
     public static IHostBuilder SetAppServices(this IHostBuilder hostBuilder)
     {
-        return hostBuilder.ConfigureServices((_, services) =>
+        return hostBuilder.ConfigureServices((hostingContext, services) =>
         {
+            if (hostingContext.Configuration.GetConnectionString(_connString) == null)
+            {
+                throw new Exception("Missing a database connection string");
+            }
             services
-
             .AddDbContextFactory<GalaxyBotContext>()
             .AddSingleton(new DiscordSocketConfig()
             {
