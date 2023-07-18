@@ -50,7 +50,7 @@ public class Bot
         DateTime buffReminderExecutionTime = utcTodayAt0500;
         if (DateTime.UtcNow.Hour >= 5)
         {
-            buffReminderExecutionTime.AddDays(1);
+            buffReminderExecutionTime = buffReminderExecutionTime.AddDays(1);
         }
         buffReminderService.ScheduleJob(buffReminderExecutionTime);
     }
