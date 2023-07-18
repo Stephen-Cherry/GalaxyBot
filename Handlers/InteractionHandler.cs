@@ -36,17 +36,21 @@ public class InteractionHandler
             await _interactionService.ExecuteCommandAsync(ctx, _serviceProvider);
             if (interaction is SocketSlashCommand slashCommand)
             {
-                var dbContext = _dbContextFactory.CreateDbContext();
-                User? user = dbContext.Users.FirstOrDefault(user => user.UserName == interaction.User.Username);
-                if (user == null)
+                GalaxyBotContext dbContext = _dbContextFactory.CreateDbContext();
+                IQueryable<User> userQuery = from user in dbContext.Users
+                                             where user.UserName == interaction.User.Username
+                                             select user;
+                User? interactionUser = userQuery.FirstOrDefault();
+
+                if (interactionUser == null)
                 {
                     var task = await dbContext.Users.AddAsync(new User() { UserName = interaction.User.Username });
-                    user = task.Entity;
+                    interactionUser = task.Entity;
                 }
                 await dbContext.CommandLogs.AddAsync(new CommandLog()
                 {
                     Name = slashCommand.CommandName,
-                    User = user,
+                    User = interactionUser,
                     UsedAt = DateTime.UtcNow
                 });
                 await dbContext.SaveChangesAsync();

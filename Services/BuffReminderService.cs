@@ -14,8 +14,23 @@ public class BuffReminderService
     public BuffReminderService(DiscordSocketClient client, IConfiguration configuration)
     {
         _client = client;
-        _client.MessageReceived += HandleMessage;
         _configuration = configuration;
+        _client.MessageReceived += (SocketMessage userMessage) =>
+        {
+            bool hasBuffCat = userMessage.CleanContent.Contains(BUFF_CAT_EMOTE);
+            bool isBot = userMessage.Author.IsBot;
+            if (hasBuffCat
+                && !isBot)
+            {
+                userMessage.Channel.SendMessageAsync("Praise be to the buff cat!");
+                bool isUpdateHour = validUpdateHoursUtc.Contains(DateTime.UtcNow.Hour);
+                if (isUpdateHour)
+                {
+                    hasUpdated = true;
+                }
+            }
+            return Task.CompletedTask;
+        };
     }
 
     public void ScheduleJob(DateTime executionTime)
@@ -55,21 +70,5 @@ public class BuffReminderService
 
             await buffChannel.SendMessageAsync("@here, I have not seen the Buff Cat lately.  Please honor me with its presence if the buffs have been updated.");
         }
-    }
-    private Task HandleMessage(SocketMessage userMessage)
-    {
-        bool hasBuffCat = userMessage.CleanContent.Contains(BUFF_CAT_EMOTE);
-        bool isBot = userMessage.Author.IsBot;
-        if (hasBuffCat
-            && !isBot)
-        {
-            userMessage.Channel.SendMessageAsync("Praise be to the buff cat!");
-            bool isUpdateHour = validUpdateHoursUtc.Contains(DateTime.UtcNow.Hour);
-            if (isUpdateHour)
-            {
-                hasUpdated = true;
-            }
-        }
-        return Task.CompletedTask;
     }
 }
