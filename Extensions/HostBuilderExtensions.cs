@@ -13,7 +13,6 @@ namespace GalaxyBot.Extensions;
 
 public static class HostBuilderExtensions
 {
-    private static readonly string _connString = "GalaxyBotDatabase";
     public static IHostBuilder SetAppConfiguration(this IHostBuilder hostBuilder)
     {
         return hostBuilder.ConfigureAppConfiguration((hostingContext, configuration) =>
@@ -33,7 +32,7 @@ public static class HostBuilderExtensions
     {
         return hostBuilder.ConfigureServices((hostingContext, services) =>
         {
-            if (hostingContext.Configuration.GetConnectionString(_connString) == null)
+            if (hostingContext.Configuration.GetConnectionString(Constants.CONNECTION_STRING) == null)
             {
                 throw new Exception("Missing a database connection string");
             }

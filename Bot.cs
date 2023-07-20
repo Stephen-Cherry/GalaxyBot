@@ -45,13 +45,5 @@ public class Bot
 
         await client.LoginAsync(TokenType.Bot, token);
         await client.StartAsync();
-
-        DateTime utcTodayAt0500 = DateTime.UtcNow.Date.AddHours(5);
-        DateTime buffReminderExecutionTime = utcTodayAt0500;
-        if (DateTime.UtcNow.Hour >= 5)
-        {
-            buffReminderExecutionTime = buffReminderExecutionTime.AddDays(1);
-        }
-        buffReminderService.ScheduleJob(buffReminderExecutionTime);
     }
 }
