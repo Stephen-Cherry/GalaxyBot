@@ -25,7 +25,7 @@ public class BuffReminderService
             }
             else
             {
-                bool isValidBuffChannelId = !ulong.TryParse(_configuration.GetValue<string>(Constants.BUFF_CHANNEL_KEY), out var buffChannelId);
+                bool isValidBuffChannelId = ulong.TryParse(_configuration.GetValue<string>(Constants.BUFF_CHANNEL_KEY), out var buffChannelId);
                 if (!isValidBuffChannelId)
                 {
                     throw new Exception("Missing BuffChannelId environment variable");
