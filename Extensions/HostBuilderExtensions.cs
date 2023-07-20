@@ -40,7 +40,9 @@ public static class HostBuilderExtensions
             .AddDbContextFactory<GalaxyBotContext>()
             .AddSingleton(new DiscordSocketConfig()
             {
-                GatewayIntents = GatewayIntents.GuildMembers | GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent
+                GatewayIntents = GatewayIntents.GuildMembers
+                                 | GatewayIntents.AllUnprivileged
+                                 | GatewayIntents.MessageContent
             })
             .AddSingleton<DiscordSocketClient>()
             .AddSingleton(new InteractionServiceConfig())
