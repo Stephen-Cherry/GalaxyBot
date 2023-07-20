@@ -5,17 +5,19 @@ namespace GalaxyBot.Data;
 
 public class GalaxyBotContext : DbContext
 {
-    private readonly IConfiguration _configuration;
+    private readonly string _connectionString;
     public DbSet<CommandLog> CommandLogs { get; set; }
     public DbSet<User> Users { get; set; }
 
     public GalaxyBotContext(IConfiguration configuration)
     {
-        _configuration = configuration;
+        _connectionString = configuration.GetConnectionString(Constants.CONNECTION_STRING)
+        ?? string.Empty;
+        if (string.IsNullOrEmpty(_connectionString)) throw new NullReferenceException();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite(_configuration.GetConnectionString("GalaxyBotDatabase"));
+        optionsBuilder.UseSqlite(_connectionString);
     }
 }

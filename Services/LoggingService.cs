@@ -35,12 +35,10 @@ public class LoggingService
 
     public async Task LogSlashCommand(SocketSlashCommand slashCommand)
     {
-        GalaxyBotContext dbContext = _dbContextFactory.CreateDbContext();
-
+        using GalaxyBotContext dbContext = _dbContextFactory.CreateDbContext();
         IQueryable<User> userQuery = from user in dbContext.Users
                                      where user.UserName == slashCommand.User.Username
                                      select user;
-
         User? interactionUser = userQuery.FirstOrDefault();
 
         if (interactionUser == null)
@@ -55,5 +53,6 @@ public class LoggingService
             UsedAt = DateTime.UtcNow
         });
         await dbContext.SaveChangesAsync();
+
     }
 }
