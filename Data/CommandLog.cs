@@ -1,4 +1,5 @@
 namespace GalaxyBot.Data;
+
 public class CommandLog
 {
     public int Id { get; set; }

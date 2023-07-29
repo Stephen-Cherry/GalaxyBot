@@ -1,5 +1,3 @@
-using Discord.Interactions;
-
 namespace GalaxyBot.SlashCommands;
 
 public class Help : InteractionModuleBase<SocketInteractionContext>

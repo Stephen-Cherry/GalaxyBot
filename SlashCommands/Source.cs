@@ -1,10 +1,7 @@
-using Discord.Interactions;
-
 namespace GalaxyBot.SlashCommands;
 
 public class Source : InteractionModuleBase<SocketInteractionContext>
 {
-
     [SlashCommand("source", "Responds with a link to the source code of the GalaxyBot.")]
     public async Task Command()
     {

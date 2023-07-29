@@ -1,4 +1,3 @@
-
 namespace GalaxyBot;
 
 public static class Constants

@@ -1,8 +1,5 @@
-using Cronos;
-using Discord.WebSocket;
-using Microsoft.Extensions.Configuration;
-
 namespace GalaxyBot.Services;
+
 public class BuffReminderService
 {
     private static bool hasUpdated = false;
@@ -14,38 +11,51 @@ public class BuffReminderService
     {
         _client = client;
         _configuration = configuration;
-        bool successfulBuffChannelLookup = ulong.TryParse(_configuration.GetValue<string>(Constants.BUFF_CHANNEL_KEY), out _buffChannelId);
-        if (!successfulBuffChannelLookup) throw new ArgumentException(Constants.BUFF_CHANNEL_KEY);
+        bool successfulBuffChannelLookup = ulong.TryParse(
+            _configuration.GetValue<string>(Constants.BUFF_CHANNEL_KEY),
+            out _buffChannelId
+        );
+        if (!successfulBuffChannelLookup)
+            throw new ArgumentException(Constants.BUFF_CHANNEL_KEY);
 
         CronExpression cronExpression = CronExpression.Parse("@midnight");
         TimeZoneInfo centralTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
 
-        TaskSchedulerService.ScheduleJob(cronExpression, centralTimeZone, async () =>
-        {
-            if (hasUpdated)
+        TaskSchedulerService.ScheduleJob(
+            cronExpression,
+            centralTimeZone,
+            async () =>
             {
-                hasUpdated = false;
-            }
-            else
-            {
-                if (_client.GetChannel(_buffChannelId) is not SocketTextChannel buffChannel)
+                if (hasUpdated)
                 {
-                    throw new Exception("Could not find a channel with the id provided" + _buffChannelId);
+                    hasUpdated = false;
                 }
+                else
+                {
+                    if (_client.GetChannel(_buffChannelId) is not SocketTextChannel buffChannel)
+                    {
+                        throw new Exception(
+                            "Could not find a channel with the id provided" + _buffChannelId
+                        );
+                    }
 
-                await buffChannel.SendMessageAsync("@here, I have not seen the Buff Cat lately.  Please honor me with its presence if the buffs have been updated.");
+                    await buffChannel.SendMessageAsync(
+                        "@here, I have not seen the Buff Cat lately.  Please honor me with its presence if the buffs have been updated."
+                    );
+                }
             }
-        });
+        );
 
         _client.MessageReceived += (SocketMessage userMessage) =>
         {
             bool hasBuffCat = userMessage.CleanContent.Contains(Constants.BUFF_CAT_EMOTE);
             bool isBot = userMessage.Author.IsBot;
-            if (hasBuffCat
-                && !isBot)
+            if (hasBuffCat && !isBot)
             {
                 userMessage.Channel.SendMessageAsync("Praise be to the buff cat!");
-                bool isUpdateHour = Constants.VALID_BUFF_UPDATE_HOURS_UTC.Contains(DateTime.UtcNow.Hour);
+                bool isUpdateHour = Constants.VALID_BUFF_UPDATE_HOURS_UTC.Contains(
+                    DateTime.UtcNow.Hour
+                );
                 if (isUpdateHour)
                 {
                     hasUpdated = true;
@@ -54,5 +64,4 @@ public class BuffReminderService
             return Task.CompletedTask;
         };
     }
-
 }

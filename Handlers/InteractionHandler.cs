@@ -1,8 +1,3 @@
-using System.Reflection;
-using Discord.Interactions;
-using Discord.WebSocket;
-using GalaxyBot.Services;
-
 namespace GalaxyBot.Handlers;
 
 public class InteractionHandler
@@ -12,11 +7,12 @@ public class InteractionHandler
     private readonly InteractionService _interactionService;
     private readonly LoggingService _loggingService;
 
-    public InteractionHandler(DiscordSocketClient client,
-                              InteractionService interactionService,
-                              IServiceProvider serviceProvider,
-                              LoggingService loggingService)
-
+    public InteractionHandler(
+        DiscordSocketClient client,
+        InteractionService interactionService,
+        IServiceProvider serviceProvider,
+        LoggingService loggingService
+    )
     {
         _client = client;
         _interactionService = interactionService;
@@ -48,5 +44,4 @@ public class InteractionHandler
             Console.WriteLine(ex.ToString());
         }
     }
-
 }

@@ -1,6 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-
 namespace GalaxyBot.Data;
 
 public class GalaxyBotContext : DbContext
@@ -11,9 +8,10 @@ public class GalaxyBotContext : DbContext
 
     public GalaxyBotContext(IConfiguration configuration)
     {
-        _connectionString = configuration.GetConnectionString(Constants.CONNECTION_STRING)
-        ?? string.Empty;
-        if (string.IsNullOrEmpty(_connectionString)) throw new NullReferenceException();
+        _connectionString =
+            configuration.GetConnectionString(Constants.CONNECTION_STRING) ?? string.Empty;
+        if (string.IsNullOrEmpty(_connectionString))
+            throw new NullReferenceException();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
