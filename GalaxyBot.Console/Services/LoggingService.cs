@@ -15,38 +15,50 @@ public class LoggingService
         _dbContextFactory = dbContextFactory;
     }
 
-    private Task LogAsync(LogMessage message)
+    private async Task LogAsync(LogMessage message)
     {
+        using GalaxyBotContext dbContext = _dbContextFactory.CreateDbContext();
+
+        DiscordLog discordLog =
+            new()
+            {
+                Severity = message.Severity,
+                Message = message.Message,
+                CreatedAt = DateTimeOffset.UtcNow
+            };
+
         if (message.Exception is CommandException commandException)
         {
-            Console.WriteLine(
-                $"[Command/{message.Severity}] {commandException.Command.Aliases[0]}"
-                    + $" failed to execute in {commandException.Context.Channel}."
-            );
+            discordLog.Type = LogType.Command;
         }
         else
         {
-            Console.WriteLine($"[General]/{message.Severity}] {message}");
+            discordLog.Type = LogType.General;
         }
-        return Task.CompletedTask;
+
+        await dbContext.DiscordLogs.AddAsync(discordLog);
+        await dbContext.SaveChangesAsync();
     }
 
     public async Task LogSlashCommand(SocketSlashCommand slashCommand)
     {
         using GalaxyBotContext dbContext = _dbContextFactory.CreateDbContext();
+
         IQueryable<User> userQuery =
             from user in dbContext.Users
             where user.UserName == slashCommand.User.Username
             select user;
+
         User? interactionUser = userQuery.FirstOrDefault();
 
         if (interactionUser == null)
         {
-            var task = await dbContext.Users.AddAsync(
+            EntityEntry<User> userEntry = await dbContext.Users.AddAsync(
                 new User() { UserName = slashCommand.User.Username }
             );
-            interactionUser = task.Entity;
+            interactionUser = userEntry.Entity;
         }
+
         await dbContext.CommandLogs.AddAsync(
             new CommandLog()
             {
@@ -55,6 +67,7 @@ public class LoggingService
                 UsedAt = DateTime.UtcNow
             }
         );
+
         await dbContext.SaveChangesAsync();
     }
 }

@@ -9,13 +9,12 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/bin/Debug/net7.0/GalaxyBot.dll",
+      "program": "${workspaceFolder}/GalaxyBot.Console/bin/Debug/net7.0/GalaxyBot.Console.dll",
       "args": [],
-      "cwd": "${workspaceFolder}",
+      "cwd": "${workspaceFolder}/GalaxyBot.Console",
       "console": "internalConsole",
       "stopAtEntry": false,
       "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
         "DOTNET_ENVIRONMENT": "Development"
       }
     },

@@ -3,16 +3,19 @@ using System;
 using GalaxyBot.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace GalaxyBot.Migrations
+namespace GalaxyBot.Data.Migrations
 {
     [DbContext(typeof(GalaxyBotContext))]
-    partial class GalaxyBotContextModelSnapshot : ModelSnapshot
+    [Migration("20230730203134_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.9");
@@ -38,6 +41,30 @@ namespace GalaxyBot.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("CommandLogs");
+                });
+
+            modelBuilder.Entity("GalaxyBot.Data.DiscordLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DiscordLogs");
                 });
 
             modelBuilder.Entity("GalaxyBot.Data.User", b =>
