@@ -9,9 +9,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/GalaxyBot.Console/bin/Debug/net7.0/GalaxyBot.Console.dll",
+      "program": "${workspaceFolder}/bin/Debug/net7.0/GalaxyBot.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/GalaxyBot.Console",
+      "cwd": "${workspaceFolder}",
       "console": "internalConsole",
       "stopAtEntry": false,
       "env": {

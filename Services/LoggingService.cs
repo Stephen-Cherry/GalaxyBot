@@ -28,13 +28,9 @@ public class LoggingService
             };
 
         if (message.Exception is CommandException commandException)
-        {
             discordLog.Type = LogType.Command;
-        }
         else
-        {
             discordLog.Type = LogType.General;
-        }
 
         await dbContext.DiscordLogs.AddAsync(discordLog);
         await dbContext.SaveChangesAsync();
@@ -51,7 +47,7 @@ public class LoggingService
 
         User? interactionUser = userQuery.FirstOrDefault();
 
-        if (interactionUser == null)
+        if (interactionUser is null)
         {
             EntityEntry<User> userEntry = await dbContext.Users.AddAsync(
                 new User() { UserName = slashCommand.User.Username }

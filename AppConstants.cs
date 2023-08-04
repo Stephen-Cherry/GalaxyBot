@@ -1,4 +1,4 @@
-namespace GalaxyBot.App;
+namespace GalaxyBot;
 
 public static class AppConstants
 {

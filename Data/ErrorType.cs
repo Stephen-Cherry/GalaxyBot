@@ -1,4 +1,4 @@
-namespace GalaxyBot.Data.Enum;
+namespace GalaxyBot.Data;
 
 public enum LogType
 {

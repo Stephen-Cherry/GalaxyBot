@@ -13,11 +13,11 @@ public class BuffReminderService
         _configuration = configuration;
 
         string? channelId = _configuration.GetValue<string>(AppConstants.BUFF_CHANNEL_ID);
+        ArgumentException.ThrowIfNullOrEmpty(channelId, nameof(channelId));
+
         bool isValidChannelId = ulong.TryParse(channelId, out _buffChannelId);
         if (!isValidChannelId)
-        {
             throw new ArgumentException(AppConstants.BUFF_CHANNEL_ID);
-        }
     }
 
     public void StartService()
@@ -28,46 +28,41 @@ public class BuffReminderService
         TaskSchedulerService.ScheduleJob(
             cronExpression,
             centralTimeZone,
-            async () =>
+            job: async () =>
             {
                 if (hasUpdated)
-                {
                     hasUpdated = false;
-                }
                 else
-                {
                     await SendReminderMessage();
-                }
             }
         );
 
         _client.MessageReceived += async (SocketMessage userMessage) =>
         {
-            bool hasBuffCat = userMessage.CleanContent.Contains(AppConstants.BUFF_CAT_EMOTE);
-            bool isBot = userMessage.Author.IsBot;
+            if (userMessage.Author.IsBot)
+                return;
 
-            if (hasBuffCat && !isBot)
+            bool hasBuffCatEmote = userMessage.CleanContent.Contains(AppConstants.BUFF_CAT_EMOTE);
+
+            if (hasBuffCatEmote)
             {
                 await userMessage.Channel.SendMessageAsync("Praise be to the buff cat!");
-                bool isUpdateHour = AppConstants.VALID_BUFF_UPDATE_HOURS_UTC.Contains(
+                bool isABuffUpdateHour = AppConstants.VALID_BUFF_UPDATE_HOURS_UTC.Contains(
                     DateTime.UtcNow.Hour
                 );
-                if (isUpdateHour)
-                {
+                if (isABuffUpdateHour)
                     hasUpdated = true;
-                }
             }
         };
     }
 
     private async Task SendReminderMessage()
     {
-        if (_client.GetChannel(_buffChannelId) is not SocketTextChannel buffChannel)
-        {
+        SocketChannel? channel = _client.GetChannel(_buffChannelId);
+        if (channel is not SocketTextChannel buffChannel)
             throw new NullReferenceException(
-                "Could not find a channel with the id provided" + _buffChannelId
+                $"Could not find a channel with the id {_buffChannelId}"
             );
-        }
         await buffChannel.SendMessageAsync(
             "@here, I have not seen the Buff Cat lately.  Please honor me with its presence if the buffs have been updated."
         );
