@@ -4,9 +4,22 @@ public static class IServiceProviderExtensions
 {
     public static async Task StartApplicationServices(this IServiceProvider serviceProvider)
     {
+        LoggingService loggingService = serviceProvider.GetRequiredService<LoggingService>();
+        await loggingService.LogToDiscord(
+            LogLevel.Info,
+            LogType.General,
+            "Starting application services"
+        );
+
+        await InitializeInteractionService(serviceProvider);
         InitializeBuffReminderService(serviceProvider);
         InitializeDatabaseService(serviceProvider);
-        await InitializeInteractionService(serviceProvider);
+
+        await loggingService.LogToDiscord(
+            LogLevel.Info,
+            LogType.General,
+            "Application services started successfully"
+        );
     }
 
     private static async Task InitializeInteractionService(IServiceProvider serviceProvider)
@@ -43,7 +56,8 @@ public static class IServiceProviderExtensions
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.ToString());
+            LoggingService loggingService = serviceProvider.GetRequiredService<LoggingService>();
+            await loggingService.LogToDiscord(LogLevel.Error, LogType.Command, ex.ToString());
         }
     }
 
