@@ -21,7 +21,7 @@ public class LoggingService
         client.Log += LogAsync;
         interactionService.Log += LogAsync;
 
-        string? channelId = _configuration.GetValue<string>(Constants.BUFF_CHANNEL_ID);
+        string? channelId = _configuration.GetValue<string>(Constants.LOG_CHANNEL_ID);
         ArgumentException.ThrowIfNullOrEmpty(channelId, nameof(channelId));
         LogChannelId = channelId;
     }
