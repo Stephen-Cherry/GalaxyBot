@@ -9,7 +9,7 @@ client.Ready += host.Services.StartApplicationServices;
 IConfiguration configuration = host.Services.GetRequiredService<IConfiguration>();
 
 string? token = configuration.GetValue<string>(Constants.TOKEN);
-ArgumentException.ThrowIfNullOrEmpty(nameof(token));
+ArgumentException.ThrowIfNullOrEmpty(token, nameof(token));
 
 await client.LoginAsync(TokenType.Bot, token);
 await client.StartAsync();

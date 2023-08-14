@@ -19,7 +19,7 @@ public static class ClientResourceRetrieverService
         return GetChannel(client, channelId);
     }
 
-    public static SocketTextChannel GetTextChannel(DiscordSocketClient client, string channelId)
+    public static SocketTextChannel GetTextChannel(DiscordSocketClient client, ulong channelId)
     {
         SocketChannel channel = GetChannel(client, channelId);
         if (channel is SocketTextChannel socketTextChannel)

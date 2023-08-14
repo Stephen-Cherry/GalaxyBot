@@ -5,7 +5,7 @@ public class LoggingService
     private readonly IDbContextFactory<GalaxyBotContext> _dbContextFactory;
     private readonly DiscordSocketClient _client;
     private readonly IConfiguration _configuration;
-    private string LogChannelId { get; init; }
+    private ulong LogChannelId { get; init; }
 
     public LoggingService(
         DiscordSocketClient client,
@@ -23,7 +23,9 @@ public class LoggingService
 
         string? channelId = _configuration.GetValue<string>(Constants.LOG_CHANNEL_ID);
         ArgumentException.ThrowIfNullOrEmpty(channelId, nameof(channelId));
-        LogChannelId = channelId;
+        bool isValidChannelId = ulong.TryParse(channelId, out ulong logChannelId);
+        if (!isValidChannelId) throw new ArgumentException($"{channelId} is not a valid ulong");
+        LogChannelId = logChannelId;
     }
 
     private async Task LogAsync(LogMessage message)

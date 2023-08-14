@@ -4,7 +4,7 @@ public class BuffReminderService
 {
     private readonly DiscordSocketClient _client;
     private readonly IConfiguration _configuration;
-    private string BuffChannelId { get; init; }
+    private ulong BuffChannelId { get; init; }
     private bool HasUpdated { get; set; }
 
     public BuffReminderService(DiscordSocketClient client, IConfiguration configuration)
@@ -14,7 +14,9 @@ public class BuffReminderService
 
         string? channelId = _configuration.GetValue<string>(Constants.BUFF_CHANNEL_ID);
         ArgumentException.ThrowIfNullOrEmpty(channelId, nameof(channelId));
-        BuffChannelId = channelId;
+        bool isValidChannelId = ulong.TryParse(channelId, out ulong buffChannelId);
+        if (!isValidChannelId) throw new ArgumentException($"{channelId} is not a valid ulong");
+        BuffChannelId = buffChannelId;
     }
 
     public void StartService()
@@ -40,7 +42,8 @@ public class BuffReminderService
 
         _client.MessageReceived += async (SocketMessage userMessage) =>
         {
-            if (userMessage.Author.IsBot)
+            if (userMessage.Author.IsBot
+                || userMessage.Channel.Id != BuffChannelId)
             {
                 return;
             }
@@ -50,9 +53,8 @@ public class BuffReminderService
             if (hasBuffCatEmote)
             {
                 await userMessage.Channel.SendMessageAsync("Praise be to the buff cat!");
-                bool isABuffUpdateHour = Constants.VALID_BUFF_UPDATE_HOURS_UTC.Contains(
-                    DateTime.UtcNow.Hour
-                );
+                bool isABuffUpdateHour = DateTimeOffset.UtcNow.Hour < 5;
+
                 if (isABuffUpdateHour)
                 {
                     HasUpdated = true;

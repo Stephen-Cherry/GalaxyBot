@@ -8,5 +8,4 @@ public static class Constants
     public static readonly string LOG_CHANNEL_ID = "LOG_CHANNEL_ID";
     public static readonly string TIME_ZONE = "Central Standard Time";
     public static readonly string TOKEN = "TOKEN";
-    public static readonly List<int> VALID_BUFF_UPDATE_HOURS_UTC = new() { 0, 1, 2, 3, 4 };
 }
