@@ -3,20 +3,11 @@ namespace GalaxyBot.Services;
 public class BuffReminderService
 {
     private readonly DiscordSocketClient _client;
-    private readonly IConfiguration _configuration;
-    private ulong BuffChannelId { get; init; }
     private bool HasUpdated { get; set; }
 
     public BuffReminderService(DiscordSocketClient client, IConfiguration configuration)
     {
         _client = client;
-        _configuration = configuration;
-
-        string? channelId = _configuration.GetValue<string>(Constants.BUFF_CHANNEL_ID);
-        ArgumentException.ThrowIfNullOrEmpty(channelId, nameof(channelId));
-        bool isValidChannelId = ulong.TryParse(channelId, out ulong buffChannelId);
-        if (!isValidChannelId) throw new ArgumentException($"{channelId} is not a valid ulong");
-        BuffChannelId = buffChannelId;
     }
 
     public void StartService()
@@ -42,23 +33,25 @@ public class BuffReminderService
 
         _client.MessageReceived += async (SocketMessage userMessage) =>
         {
-            if (userMessage.Author.IsBot
-                || userMessage.Channel.Id != BuffChannelId)
+            if (userMessage.Author.IsBot)
             {
                 return;
             }
 
             bool hasBuffCatEmote = userMessage.CleanContent.Contains(Constants.BUFF_CAT_EMOTE);
 
-            if (hasBuffCatEmote)
+            if (!hasBuffCatEmote)
             {
-                await userMessage.Channel.SendMessageAsync("Praise be to the buff cat!");
-                bool isABuffUpdateHour = DateTimeOffset.UtcNow.Hour < 5;
+                return;
+            }
 
-                if (isABuffUpdateHour)
-                {
-                    HasUpdated = true;
-                }
+            await userMessage.Channel.SendMessageAsync("Praise be to the buff cat!");
+            bool isABuffUpdateHour = DateTimeOffset.UtcNow.Hour < 5;
+            bool isUpdateChannel = userMessage.Channel.Id.ToString() == Constants.BUFF_CHANNEL_ID;
+
+            if (isABuffUpdateHour && isUpdateChannel)
+            {
+                HasUpdated = true;
             }
         };
     }
@@ -67,7 +60,7 @@ public class BuffReminderService
     {
         SocketTextChannel buffChannel = ClientResourceRetrieverService.GetTextChannel(
             _client,
-            BuffChannelId
+            Constants.BUFF_CHANNEL_ID
         );
         await buffChannel.SendMessageAsync(
             "@here, I have not seen the Buff Cat lately.  Please honor me with its presence if the buffs have been updated."
