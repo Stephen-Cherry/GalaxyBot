@@ -1,21 +1,17 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-
 namespace GalaxyBot.Data;
 
 public class GalaxyBotContext : DbContext
 {
-    private readonly IConfiguration _configuration;
-    public DbSet<CommandLog> CommandLogs { get; set; }
-    public DbSet<User> Users { get; set; }
+    public DbSet<DiscordLog> DiscordLogs { get; set; }
+    public string DbPath { get; }
 
-    public GalaxyBotContext(IConfiguration configuration)
+    public GalaxyBotContext()
     {
-        _configuration = configuration;
+        var folder = Environment.SpecialFolder.LocalApplicationData;
+        var path = Environment.GetFolderPath(folder);
+        DbPath = Path.Join(path, "GalaxyBot.db"); 
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSqlite(_configuration.GetConnectionString("GalaxyBotDatabase"));
-    }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
+        optionsBuilder.UseSqlite($"Data Source={DbPath}");
 }

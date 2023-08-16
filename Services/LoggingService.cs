@@ -1,59 +1,76 @@
-using Discord;
-using Discord.Commands;
-using Discord.Interactions;
-using Discord.WebSocket;
-using GalaxyBot.Data;
-using Microsoft.EntityFrameworkCore;
-
 namespace GalaxyBot.Services;
+
 public class LoggingService
 {
     private readonly IDbContextFactory<GalaxyBotContext> _dbContextFactory;
+    private readonly DiscordSocketClient _client;
 
-    public LoggingService(DiscordSocketClient client,
-                          InteractionService interactionService,
-                          IDbContextFactory<GalaxyBotContext> dbContextFactory)
+    public LoggingService(
+        DiscordSocketClient client,
+        InteractionService interactionService,
+        IDbContextFactory<GalaxyBotContext> dbContextFactory
+    )
     {
+        _client = client;
+        _dbContextFactory = dbContextFactory;
+
         client.Log += LogAsync;
         interactionService.Log += LogAsync;
-        _dbContextFactory = dbContextFactory;
     }
 
-    private Task LogAsync(LogMessage message)
+    private async Task LogAsync(LogMessage message)
     {
-        if (message.Exception is CommandException commandException)
+        using GalaxyBotContext dbContext = _dbContextFactory.CreateDbContext();
+
+        DiscordLog discordLog =
+            new()
+            {
+                Severity = message.Severity,
+                Message = message.Message,
+                CreatedAt = DateTimeOffset.UtcNow
+            };
+
+        if (message.Exception is CommandException)
         {
-            Console.WriteLine($"[Command/{message.Severity}] {commandException.Command.Aliases[0]}"
-            + $" failed to execute in {commandException.Context.Channel}.");
+            discordLog.Type = LogType.Command;
         }
         else
         {
-            Console.WriteLine($"[General]/{message.Severity}] {message}");
+            discordLog.Type = LogType.General;
         }
-        return Task.CompletedTask;
+
+        await dbContext.DiscordLogs.AddAsync(discordLog);
+        await dbContext.SaveChangesAsync();
+        await LogToDiscord(discordLog.Severity, discordLog.Type, discordLog.Message);
     }
 
-    public async Task LogSlashCommand(SocketSlashCommand slashCommand)
+    public async Task LogToDiscord(Embed embed)
     {
-        GalaxyBotContext dbContext = _dbContextFactory.CreateDbContext();
+        SocketTextChannel logChannel = ClientResourceRetrieverService.GetTextChannel(
+            _client,
+            Constants.LOG_CHANNEL_ID
+        );
+        await logChannel.SendMessageAsync(embed: embed);
+    }
 
-        IQueryable<User> userQuery = from user in dbContext.Users
-                                     where user.UserName == slashCommand.User.Username
-                                     select user;
-
-        User? interactionUser = userQuery.FirstOrDefault();
-
-        if (interactionUser == null)
+    public async Task LogToDiscord(LogSeverity logSeverity, LogType logType, string message)
+    {
+        Color embedColor = logSeverity switch
         {
-            var task = await dbContext.Users.AddAsync(new User() { UserName = slashCommand.User.Username });
-            interactionUser = task.Entity;
-        }
-        await dbContext.CommandLogs.AddAsync(new CommandLog()
-        {
-            Name = slashCommand.CommandName,
-            User = interactionUser,
-            UsedAt = DateTime.UtcNow
-        });
-        await dbContext.SaveChangesAsync();
+            LogSeverity.Critical => Color.DarkRed,
+            LogSeverity.Error => Color.Red,
+            LogSeverity.Warning => Color.DarkOrange,
+            LogSeverity.Info => Color.LightGrey,
+            _ => Color.Default
+        };
+
+        EmbedBuilder embedBuilder = new();
+        embedBuilder.WithTitle(
+            $"[{logSeverity.ToString().ToUpper()}]/[{logType.ToString().ToUpper()}]"
+        );
+        embedBuilder.WithColor(embedColor);
+        embedBuilder.WithDescription(message);
+        embedBuilder.WithCurrentTimestamp();
+        await LogToDiscord(embedBuilder.Build());
     }
 }

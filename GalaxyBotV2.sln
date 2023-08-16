@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.5.002.0
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GalaxyBot", "GalaxyBot.csproj", "{50CEA42D-7E66-47FE-9059-182DAA985134}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalaxyBot", "GalaxyBot.csproj", "{2D5EE33D-1A8A-4AB8-A5CD-EC579EB8D1C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{50CEA42D-7E66-47FE-9059-182DAA985134}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{50CEA42D-7E66-47FE-9059-182DAA985134}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{50CEA42D-7E66-47FE-9059-182DAA985134}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{50CEA42D-7E66-47FE-9059-182DAA985134}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D5EE33D-1A8A-4AB8-A5CD-EC579EB8D1C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D5EE33D-1A8A-4AB8-A5CD-EC579EB8D1C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D5EE33D-1A8A-4AB8-A5CD-EC579EB8D1C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D5EE33D-1A8A-4AB8-A5CD-EC579EB8D1C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {9CC8C706-F718-414F-BE5F-BBD368AEF334}
+		SolutionGuid = {97236911-DA30-48D2-9050-4BBBA2F9E2B9}
 	EndGlobalSection
 EndGlobal

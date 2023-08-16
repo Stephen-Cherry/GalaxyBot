@@ -9,8 +9,9 @@ GalaxyBotv2 is a Discord bot with various functionalities for the Galaxy Gaming 
 3. Ensure the following environmental variables exist:
 
 ```
-BuffChannelId -> Channel to track buff notifications
-DiscordToken -> Bot token
+BUFF_CHANNEL_ID -> Channel to track buff notifications
+LOG_CHANNEL_ID -> Channel to write logs to
+TOKEN -> Bot token
 ```
 
 4. Run compiled bot.

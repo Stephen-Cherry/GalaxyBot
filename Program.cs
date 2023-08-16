@@ -1,33 +1,17 @@
-﻿using Discord;
-using Discord.WebSocket;
-using GalaxyBot.Extensions;
-using GalaxyBot.Handlers;
-using GalaxyBot.Services;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
+builder.Services.AddApplicationServices();
 
-IHost host = Host.CreateDefaultBuilder(args)
-        .SetAppConfiguration()
-        .SetAppServices()
-        .Build();
+IHost host = builder.Build();
 
 DiscordSocketClient client = host.Services.GetRequiredService<DiscordSocketClient>();
-BuffReminderService buffReminderService = host.Services.GetRequiredService<BuffReminderService>();
-InteractionHandler interactionHandler = host.Services.GetRequiredService<InteractionHandler>();
+client.Ready += host.Services.StartApplicationServices;
 
-string token = host.Services.GetRequiredService<IConfiguration>().GetValue<string>("DiscordToken")
-               ?? throw new Exception("Missing token");
+IConfiguration configuration = host.Services.GetRequiredService<IConfiguration>();
 
-client.Ready += async () =>
-{
-    Console.WriteLine("Registering Commands");
-    await interactionHandler.InitializeAsync();
-
-    Console.WriteLine($"Successfully logged in as {client.CurrentUser.Username}");
-};
+string? token = configuration.GetValue<string>(Constants.TOKEN);
+ArgumentException.ThrowIfNullOrEmpty(token);
 
 await client.LoginAsync(TokenType.Bot, token);
 await client.StartAsync();
 
-await Task.Delay(Timeout.Infinite);
+await host.RunAsync();

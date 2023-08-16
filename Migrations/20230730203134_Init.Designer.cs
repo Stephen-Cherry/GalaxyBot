@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace GalaxyBot.Migrations
+namespace GalaxyBot.Data.Migrations
 {
     [DbContext(typeof(GalaxyBotContext))]
-    [Migration("20230717143903_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20230730203134_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,6 +41,30 @@ namespace GalaxyBot.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("CommandLogs");
+                });
+
+            modelBuilder.Entity("GalaxyBot.Data.DiscordLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DiscordLogs");
                 });
 
             modelBuilder.Entity("GalaxyBot.Data.User", b =>
