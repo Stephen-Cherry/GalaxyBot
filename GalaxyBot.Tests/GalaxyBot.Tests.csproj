@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GalaxyBotv2\GalaxyBot.csproj" />
+    <ProjectReference Include="..\GalaxyBot.Console\GalaxyBot.Console.csproj" />
   </ItemGroup>
 
 </Project>
