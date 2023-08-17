@@ -4,58 +4,57 @@ public class LoggingService
 {
     private readonly IDbContextFactory<GalaxyBotContext> _dbContextFactory;
     private readonly DiscordSocketClient _client;
+    private readonly ulong _logChannelId;
 
-    public LoggingService(
-        DiscordSocketClient client,
-        InteractionService interactionService,
-        IDbContextFactory<GalaxyBotContext> dbContextFactory
-    )
+    public LoggingService(DiscordSocketClient client,
+                          IConfiguration configuration,
+                          InteractionService interactionService,
+                          IDbContextFactory<GalaxyBotContext> dbContextFactory)
     {
         _client = client;
         _dbContextFactory = dbContextFactory;
+        _logChannelId = configuration.GetValue<ulong>(Constants.LOG_CHANNEL_ID);
 
         client.Log += LogAsync;
         interactionService.Log += LogAsync;
     }
 
-    private async Task LogAsync(LogMessage message)
+    public async Task LogAsync(LogMessage logMessage)
+    {
+        BotLogMessage botLogMessage = new()
+        {
+            Message = logMessage.Message,
+            Severity = logMessage.Severity,
+            Source = logMessage.Source
+        };
+
+        await LogAsync(botLogMessage);
+    }
+
+    public async Task LogAsync(BotLogMessage logMessage)
+    {
+        BotLogMessage botLogMessage = new()
+        {
+            Message = logMessage.Message,
+            Severity = logMessage.Severity,
+            Source = logMessage.Source
+        };
+
+        await LogToDatabase(botLogMessage);
+        await LogToDiscord(botLogMessage);
+    }
+
+    private async Task LogToDatabase(BotLogMessage logMessage)
     {
         using GalaxyBotContext dbContext = _dbContextFactory.CreateDbContext();
 
-        DiscordLog discordLog =
-            new()
-            {
-                Severity = message.Severity,
-                Message = message.Message,
-                CreatedAt = DateTimeOffset.UtcNow
-            };
-
-        if (message.Exception is CommandException)
-        {
-            discordLog.Type = LogType.Command;
-        }
-        else
-        {
-            discordLog.Type = LogType.General;
-        }
-
-        await dbContext.DiscordLogs.AddAsync(discordLog);
+        await dbContext.LogMessages.AddAsync(logMessage);
         await dbContext.SaveChangesAsync();
-        await LogToDiscord(discordLog.Severity, discordLog.Type, discordLog.Message);
-    }
+    } 
 
-    public async Task LogToDiscord(Embed embed)
+    private async Task LogToDiscord(BotLogMessage logMessage)
     {
-        SocketTextChannel logChannel = ClientResourceRetrieverService.GetTextChannel(
-            _client,
-            Constants.LOG_CHANNEL_ID
-        );
-        await logChannel.SendMessageAsync(embed: embed);
-    }
-
-    public async Task LogToDiscord(LogSeverity logSeverity, LogType logType, string message)
-    {
-        Color embedColor = logSeverity switch
+        Color embedColor = logMessage.Severity switch
         {
             LogSeverity.Critical => Color.DarkRed,
             LogSeverity.Error => Color.Red,
@@ -64,13 +63,14 @@ public class LoggingService
             _ => Color.Default
         };
 
-        EmbedBuilder embedBuilder = new();
-        embedBuilder.WithTitle(
-            $"[{logSeverity.ToString().ToUpper()}]/[{logType.ToString().ToUpper()}]"
-        );
-        embedBuilder.WithColor(embedColor);
-        embedBuilder.WithDescription(message);
-        embedBuilder.WithCurrentTimestamp();
-        await LogToDiscord(embedBuilder.Build());
+        Embed embed = new EmbedBuilder()
+            .WithTitle($"[{logMessage.Severity.ToString().ToUpper()}]")
+            .WithColor(embedColor)
+            .WithDescription(logMessage.Message)
+            .WithCurrentTimestamp()
+            .Build();
+
+        SocketTextChannel logChannel = _client.GetTextChannel(_logChannelId);
+        await logChannel.SendMessageAsync(embed: embed);
     }
 }
