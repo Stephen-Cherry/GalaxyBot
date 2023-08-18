@@ -12,13 +12,15 @@ public class BuffReminderServiceTests
     private IMessage _message = default!;
     private IConfiguration _configuration = default!;
     private BuffReminderService _buffReminderService = default!;
+    private readonly ulong _buffChannelId = 123456;
+    private readonly string _buffCat = ":BuffCat:";
 
     [TestInitialize]
     public void Initialize() 
     {
         Dictionary<string, string?> inMemoryConfig = new()
         {
-            {Constants.BUFF_CHANNEL_ID, "123456" }
+            {Constants.BUFF_CHANNEL_ID, _buffChannelId.ToString() }
         };
 
         _client = Substitute.ForPartsOf<DiscordSocketClient>();
@@ -32,8 +34,8 @@ public class BuffReminderServiceTests
     {
         // Arrange
         _message.Author.IsBot.Returns(true);
-        _message.CleanContent.Returns(":BuffCat:");
-        _message.Channel.Id.Returns((ulong)123456);
+        _message.CleanContent.Returns(_buffCat);
+        _message.Channel.Id.Returns(_buffChannelId);
 
         // Act
         bool isValid = _buffReminderService.IsValidBuffUpdateMessage(_message, 0);
@@ -48,7 +50,7 @@ public class BuffReminderServiceTests
         // Arrange
         _message.Author.IsBot.Returns(false);
         _message.CleanContent.Returns("Random Message");
-        _message.Channel.Id.Returns((ulong)123456);
+        _message.Channel.Id.Returns(_buffChannelId);
 
         // Act
         bool isValid = _buffReminderService.IsValidBuffUpdateMessage(_message, 0);
@@ -62,8 +64,8 @@ public class BuffReminderServiceTests
     {
         // Arrange
         _message.Author.IsBot.Returns(false);
-        _message.CleanContent.Returns(":BuffCat:");
-        _message.Channel.Id.Returns((ulong)123456);
+        _message.CleanContent.Returns(_buffCat);
+        _message.Channel.Id.Returns(_buffChannelId);
 
         // Act
         bool isValid = _buffReminderService.IsValidBuffUpdateMessage(_message, 8);
@@ -77,8 +79,8 @@ public class BuffReminderServiceTests
     {
         // Arrange
         _message.Author.IsBot.Returns(false);
-        _message.CleanContent.Returns(":BuffCat:");
-        _message.Channel.Id.Returns((ulong)123457);
+        _message.CleanContent.Returns(_buffCat);
+        _message.Channel.Id.Returns(_buffChannelId + 1);
 
         // Act
         bool isValid = _buffReminderService.IsValidBuffUpdateMessage(_message, 0);
@@ -92,8 +94,8 @@ public class BuffReminderServiceTests
     {
         // Arrange
         _message.Author.IsBot.Returns(false);
-        _message.CleanContent.Returns(":BuffCat:");
-        _message.Channel.Id.Returns((ulong)123456);
+        _message.CleanContent.Returns(_buffCat);
+        _message.Channel.Id.Returns(_buffChannelId);
 
         // Act
         bool isValid = _buffReminderService.IsValidBuffUpdateMessage(_message, 0);
