@@ -13,10 +13,9 @@ public class BuffReminderServiceTests
     private IConfiguration _configuration = default!;
     private BuffReminderService _buffReminderService = default!;
     private readonly ulong _buffChannelId = 123456;
-    private readonly string _buffCat = ":BuffCat:";
 
     [TestInitialize]
-    public void Initialize() 
+    public void Initialize()
     {
         Dictionary<string, string?> inMemoryConfig = new()
         {
@@ -30,77 +29,22 @@ public class BuffReminderServiceTests
     }
 
     [TestMethod]
-    public void BotMessage()
+    [DataRow(true, ":BuffCat:", 123456UL, 0, false)]
+    [DataRow(false, ":Random Message:", 123456UL, 0, false)]
+    [DataRow(false, ":BuffCat:", 123456UL, 8, false)]
+    [DataRow(false, ":BuffCat:", 1234567UL, 0, false)]
+    [DataRow(false, ":BuffCat:", 123456UL, 0, true)]
+    public void ValidateBuffMessage(bool isBot, string message, ulong channelId, int utcHour, bool expected)
     {
         // Arrange
-        _message.Author.IsBot.Returns(true);
-        _message.CleanContent.Returns(_buffCat);
-        _message.Channel.Id.Returns(_buffChannelId);
+        _message.Author.IsBot.Returns(isBot);
+        _message.CleanContent.Returns(message);
+        _message.Channel.Id.Returns(channelId);
 
         // Act
-        bool isValid = _buffReminderService.IsValidBuffUpdateMessage(_message, 0);
+        bool isValid = _buffReminderService.IsValidBuffUpdateMessage(_message, utcHour);
 
         // Assert
-        Assert.AreEqual(false, isValid);
-    }
-
-    [TestMethod]
-    public void UserMessageNoCat()
-    {
-        // Arrange
-        _message.Author.IsBot.Returns(false);
-        _message.CleanContent.Returns("Random Message");
-        _message.Channel.Id.Returns(_buffChannelId);
-
-        // Act
-        bool isValid = _buffReminderService.IsValidBuffUpdateMessage(_message, 0);
-
-        // Assert
-        Assert.AreEqual(false, isValid);
-    }
-
-    [TestMethod]
-    public void UserMessageCatOutHours()
-    {
-        // Arrange
-        _message.Author.IsBot.Returns(false);
-        _message.CleanContent.Returns(_buffCat);
-        _message.Channel.Id.Returns(_buffChannelId);
-
-        // Act
-        bool isValid = _buffReminderService.IsValidBuffUpdateMessage(_message, 8);
-
-        // Assert
-        Assert.AreEqual(false, isValid);
-    }
-
-    [TestMethod]
-    public void UserMessageCatInHoursOutChannel()
-    {
-        // Arrange
-        _message.Author.IsBot.Returns(false);
-        _message.CleanContent.Returns(_buffCat);
-        _message.Channel.Id.Returns(_buffChannelId + 1);
-
-        // Act
-        bool isValid = _buffReminderService.IsValidBuffUpdateMessage(_message, 0);
-
-        // Assert
-        Assert.AreEqual(false, isValid);
-    }
-
-    [TestMethod]
-    public void UserMessageCatInHoursInChannel()
-    {
-        // Arrange
-        _message.Author.IsBot.Returns(false);
-        _message.CleanContent.Returns(_buffCat);
-        _message.Channel.Id.Returns(_buffChannelId);
-
-        // Act
-        bool isValid = _buffReminderService.IsValidBuffUpdateMessage(_message, 0);
-
-        // Assert
-        Assert.AreEqual(true, isValid);
+        Assert.AreEqual(expected, isValid);
     }
 }
