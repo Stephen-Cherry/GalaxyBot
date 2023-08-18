@@ -3,7 +3,7 @@ namespace GalaxyBot.Services;
 public class BuffReminderService
 {
     private readonly DiscordSocketClient _client;
-    private bool _hasUpdated;
+    private bool _hasUpdated = false;
     private readonly ulong _buffChannelId;
 
     public bool HasUpdated { get { return _hasUpdated; } }
