@@ -6,8 +6,7 @@ using NSubstitute;
 namespace GalaxyBot.Tests;
 
 [TestClass]
-public class BuffReminderServiceTests
-{
+public class BuffReminderServiceTests {
     private DiscordSocketClient _client = default!;
     private IMessage _message = default!;
     private IConfiguration _configuration = default!;
@@ -15,8 +14,7 @@ public class BuffReminderServiceTests
     private readonly ulong _buffChannelId = 123456;
 
     [TestInitialize]
-    public void Initialize()
-    {
+    public void Initialize() {
         Dictionary<string, string?> inMemoryConfig = new()
         {
             {Constants.BUFF_CHANNEL_ID, _buffChannelId.ToString() }
@@ -34,8 +32,7 @@ public class BuffReminderServiceTests
     [DataRow(false, ":BuffCat:", 123456UL, 8, false)]
     [DataRow(false, ":BuffCat:", 1234567UL, 0, false)]
     [DataRow(false, ":BuffCat:", 123456UL, 0, true)]
-    public void ValidateBuffMessage(bool isBot, string message, ulong channelId, int utcHour, bool expected)
-    {
+    public void ValidateBuffMessage(bool isBot, string message, ulong channelId, int utcHour, bool expected) {
         // Arrange
         _message.Author.IsBot.Returns(isBot);
         _message.CleanContent.Returns(message);

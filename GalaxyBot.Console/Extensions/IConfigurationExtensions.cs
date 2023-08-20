@@ -1,9 +1,7 @@
 ﻿namespace GalaxyBot.Extensions;
 
-public static class IConfigurationExtensions
-{
-    public static List<string> ValidateBotSecrets(this IConfiguration configuration)
-    {
+public static class IConfigurationExtensions {
+    public static List<string> ValidateBotSecrets(this IConfiguration configuration) {
         List<string> invalidSecrets = new();
 
         if (configuration.GetValue<string>(Constants.TOKEN) == null) invalidSecrets.Add(Constants.TOKEN);
@@ -13,14 +11,10 @@ public static class IConfigurationExtensions
         return invalidSecrets;
     }
 
-    private static ulong? GetNullableUInt32(IConfiguration configuration, string key)
-    {
-        try
-        {
+    private static ulong? GetNullableUInt32(IConfiguration configuration, string key) {
+        try {
             return configuration.GetValue<ulong?>(key);
-        }
-        catch (InvalidOperationException)
-        {
+        } catch (InvalidOperationException) {
             return null;
         }
     }

@@ -1,7 +1,6 @@
 namespace GalaxyBot.Services;
 
-public class LoggingService
-{
+public class LoggingService {
     private readonly IDbContextFactory<GalaxyBotContext> _dbContextFactory;
     private readonly DiscordSocketClient _client;
     private readonly ulong _logChannelId;
@@ -9,8 +8,7 @@ public class LoggingService
     public LoggingService(DiscordSocketClient client,
                           IConfiguration configuration,
                           InteractionService interactionService,
-                          IDbContextFactory<GalaxyBotContext> dbContextFactory)
-    {
+                          IDbContextFactory<GalaxyBotContext> dbContextFactory) {
         _client = client;
         _dbContextFactory = dbContextFactory;
         _logChannelId = configuration.GetValue<ulong>(Constants.LOG_CHANNEL_ID);
@@ -19,10 +17,8 @@ public class LoggingService
         interactionService.Log += LogAsync;
     }
 
-    public async Task LogAsync(LogMessage logMessage)
-    {
-        BotLogMessage botLogMessage = new()
-        {
+    public async Task LogAsync(LogMessage logMessage) {
+        BotLogMessage botLogMessage = new() {
             Message = logMessage.Message,
             Severity = logMessage.Severity,
             Source = logMessage.Source
@@ -31,10 +27,8 @@ public class LoggingService
         await LogAsync(botLogMessage);
     }
 
-    public async Task LogAsync(BotLogMessage logMessage)
-    {
-        BotLogMessage botLogMessage = new()
-        {
+    public async Task LogAsync(BotLogMessage logMessage) {
+        BotLogMessage botLogMessage = new() {
             Message = logMessage.Message,
             Severity = logMessage.Severity,
             Source = logMessage.Source
@@ -44,18 +38,15 @@ public class LoggingService
         await LogToDiscord(botLogMessage);
     }
 
-    private async Task LogToDatabase(BotLogMessage logMessage)
-    {
+    private async Task LogToDatabase(BotLogMessage logMessage) {
         using GalaxyBotContext dbContext = _dbContextFactory.CreateDbContext();
 
         await dbContext.LogMessages.AddAsync(logMessage);
         await dbContext.SaveChangesAsync();
-    } 
+    }
 
-    private async Task LogToDiscord(BotLogMessage logMessage)
-    {
-        Color embedColor = logMessage.Severity switch
-        {
+    private async Task LogToDiscord(BotLogMessage logMessage) {
+        Color embedColor = logMessage.Severity switch {
             LogSeverity.Critical => Color.DarkRed,
             LogSeverity.Error => Color.Red,
             LogSeverity.Warning => Color.DarkOrange,
