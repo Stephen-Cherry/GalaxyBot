@@ -23,13 +23,18 @@ public class BuffReminderService {
     }
 
     private async Task NightlyBuffCheck() {
-        if (_hasUpdated) _hasUpdated = false;
-        else await SendReminderMessage();
+        if (_hasUpdated) {
+            _hasUpdated = false;
+        } else await SendReminderMessage();
     }
 
     private async Task HandleMessageReceived(SocketMessage userMessage) {
-        if (IsBuffCatMessage(userMessage)) await userMessage.Channel.SendMessageAsync("Praise be to the buff cat!");
-        if (IsValidBuffUpdateMessage(userMessage, DateTimeOffset.UtcNow.Hour)) _hasUpdated = true;
+        if (IsBuffCatMessage(userMessage)) {
+            await userMessage.Channel.SendMessageAsync("Praise be to the buff cat!");
+        }
+        if (IsValidBuffUpdateMessage(userMessage, DateTimeOffset.UtcNow.Hour)) {
+            _hasUpdated = true;
+        }
     }
 
     private async Task SendReminderMessage() {
@@ -40,12 +45,18 @@ public class BuffReminderService {
     }
 
     public bool IsValidBuffUpdateMessage(IMessage userMessage, int utcHour) {
-        if (userMessage.Author.IsBot) return false;
-        if (!IsBuffCatMessage(userMessage)) return false;
+        if (userMessage.Author.IsBot) {
+            return false;
+        }
+        if (!IsBuffCatMessage(userMessage)) {
+            return false;
+        }
 
         bool isABuffUpdateHour = Constants.BUFF_HOURS.Contains(utcHour);
         bool isUpdateChannel = userMessage.Channel.Id == _buffChannelId;
-        if (!isABuffUpdateHour || !isUpdateChannel) return false;
+        if (!isABuffUpdateHour || !isUpdateChannel) {
+            return false;
+        }
 
         return true;
     }
