@@ -1,9 +1,11 @@
 namespace GalaxyBot.Tests;
 
 [TestClass]
-public class SecretsTests {
+public class SecretsTests
+{
     [TestMethod]
-    public void HasValidSecrets() {
+    public void HasValidSecrets()
+    {
         // Arrange
         Dictionary<string, string?> keyValuePairs = new()
         {
@@ -23,7 +25,8 @@ public class SecretsTests {
     }
 
     [TestMethod]
-    public void HasInvalidBuffChannelId() {
+    public void HasInvalidBuffChannelId()
+    {
         // Arrange
         Dictionary<string, string?> keyValuePairs = new()
         {
@@ -43,7 +46,8 @@ public class SecretsTests {
     }
 
     [TestMethod]
-    public void HasInvalidLogChannelId() {
+    public void HasInvalidLogChannelId()
+    {
         // Arrange
         Dictionary<string, string?> keyValuePairs = new()
         {
@@ -63,7 +67,8 @@ public class SecretsTests {
     }
 
     [TestMethod]
-    public void HasMissingToken() {
+    public void HasMissingToken()
+    {
         // Arrange
         Dictionary<string, string?> keyValuePairs = new()
         {
@@ -82,7 +87,8 @@ public class SecretsTests {
     }
 
     [TestMethod]
-    public void HasMissingBuffChannelId() {
+    public void HasMissingBuffChannelId()
+    {
         // Arrange
         Dictionary<string, string?> keyValuePairs = new()
         {
@@ -101,7 +107,8 @@ public class SecretsTests {
     }
 
     [TestMethod]
-    public void HasMissingLogChannelId() {
+    public void HasMissingLogChannelId()
+    {
         // Arrange
         Dictionary<string, string?> keyValuePairs = new()
         {

@@ -1,8 +1,9 @@
 namespace GalaxyBot.Extensions;
 
-public static class IServiceCollectionExtensions {
-    public static void AddApplicationServices(this IServiceCollection services) {
-        services.AddDbContextFactory<GalaxyBotContext>();
+public static class IServiceCollectionExtensions
+{
+    public static void AddApplicationServices(this IServiceCollection services)
+    {
         services.AddSingleton(GetDiscordSocketConfig());
         services.AddSingleton<DiscordSocketClient>();
         services.AddSingleton(new InteractionServiceConfig());
@@ -11,7 +12,8 @@ public static class IServiceCollectionExtensions {
         services.AddSingleton<BuffReminderService>();
     }
 
-    private static DiscordSocketConfig GetDiscordSocketConfig() => new() {
+    private static DiscordSocketConfig GetDiscordSocketConfig() => new()
+    {
         GatewayIntents = GatewayIntents.GuildMembers | GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent
     };
 }
