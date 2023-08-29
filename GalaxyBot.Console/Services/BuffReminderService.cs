@@ -32,7 +32,10 @@ public class BuffReminderService
         {
             _hasUpdated = false;
         }
-        else await SendReminderMessage();
+        else
+        {
+            await SendReminderMessage();
+        }
     }
 
     private async Task HandleMessageReceived(SocketMessage userMessage)
@@ -77,5 +80,7 @@ public class BuffReminderService
     }
 
     private static bool IsBuffCatMessage(IMessage userMessage)
-        => userMessage.CleanContent.Contains(Constants.BUFF_CAT_EMOTE);
+    {
+        return userMessage.CleanContent.Contains(Constants.BUFF_CAT_EMOTE);
+    }
 }
