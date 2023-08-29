@@ -14,6 +14,6 @@ public static class IServiceCollectionExtensions
 
     private static DiscordSocketConfig GetDiscordSocketConfig() => new()
     {
-        GatewayIntents = GatewayIntents.GuildMembers | GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent
+        GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMessages | GatewayIntents.MessageContent
     };
 }
