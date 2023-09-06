@@ -5,16 +5,23 @@ GalaxyBotv2 is a Discord bot with various functionalities for the Galaxy Gaming 
 ## Setup
 
 1. Clone the repository to your local machine.
-2. Compile with .NET CLI or tool of choice.
-3. Ensure the following environmental variables exist:
+2. Install the required packages from pip
 
 ```
-BUFF_CHANNEL_ID -> Channel to track buff notifications
-LOG_CHANNEL_ID -> Channel to write logs to
-TOKEN -> Bot token
+pip install -r requirements.txt
 ```
 
-4. Run compiled bot.
+3. Save a .env file or set the following environment variable
+
+```
+GALAXY_TOKEN -> Bot token
+```
+
+4. Run bot
+
+```
+python src/app.py
+```
 
 ## Contributing
 
