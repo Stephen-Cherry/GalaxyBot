@@ -4,7 +4,6 @@ public static class IServiceCollectionExtensions
 {
     public static void AddApplicationServices(this IServiceCollection services)
     {
-        services.AddDbContextFactory<GalaxyBotContext>();
         services.AddSingleton(GetDiscordSocketConfig());
         services.AddSingleton<DiscordSocketClient>();
         services.AddSingleton(new InteractionServiceConfig());
@@ -13,11 +12,8 @@ public static class IServiceCollectionExtensions
         services.AddSingleton<BuffReminderService>();
     }
 
-    private static DiscordSocketConfig GetDiscordSocketConfig()
+    private static DiscordSocketConfig GetDiscordSocketConfig() => new()
     {
-        return new DiscordSocketConfig()
-        {
-            GatewayIntents = GatewayIntents.GuildMembers | GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent
-        };
-    }
+        GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMessages | GatewayIntents.MessageContent
+    };
 }

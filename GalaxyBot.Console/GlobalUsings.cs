@@ -1,14 +1,13 @@
 global using Cronos;
 global using Discord;
-global using Discord.Commands;
 global using Discord.Interactions;
 global using Discord.WebSocket;
 global using GalaxyBot;
-global using GalaxyBot.Data;
+global using GalaxyBot.Models;
 global using GalaxyBot.Extensions;
 global using GalaxyBot.Services;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
-global using Microsoft.EntityFrameworkCore;
+global using System.Collections.ObjectModel;
 global using System.Reflection;

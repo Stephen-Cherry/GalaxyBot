@@ -1,4 +1,11 @@
 ﻿HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
+
+List<string> invalidSecrets = builder.Configuration.ValidateBotSecrets();
+if (invalidSecrets.Any())
+{
+    throw new ArgumentException($"The following secrets are invalid: {invalidSecrets}");
+}
+
 builder.Services.AddApplicationServices();
 
 IHost host = builder.Build();

@@ -2,17 +2,29 @@ namespace GalaxyBot.Extensions;
 
 public static class IServiceProviderExtensions
 {
+    private static bool _firstRun = true;
     public static async Task StartApplicationServices(this IServiceProvider serviceProvider)
     {
+        if (!_firstRun) return;
+
+        _firstRun = false;
+
         LoggingService loggingService = serviceProvider.GetRequiredService<LoggingService>();
 
-        await loggingService.LogToDiscord(LogSeverity.Info, LogType.General, "Starting application services");
+        await loggingService.LogAsync(new BotLogMessage()
+        {
+            Severity = LogSeverity.Info,
+            Message = "Starting application services"
+        });
 
         await InitializeInteractionService(serviceProvider);
         InitializeBuffReminderService(serviceProvider);
-        InitializeDatabaseService(serviceProvider);
 
-        await loggingService.LogToDiscord(LogSeverity.Info, LogType.General, "Application services started successfully");
+        await loggingService.LogAsync(new BotLogMessage()
+        {
+            Severity = LogSeverity.Info,
+            Message = "Application services started successfully"
+        });
     }
 
     private static async Task InitializeInteractionService(IServiceProvider serviceProvider)
@@ -30,25 +42,21 @@ public static class IServiceProviderExtensions
                 SocketInteractionContext socketInteractionContext = new(client, interaction);
                 _ = await interactionService.ExecuteCommandAsync(socketInteractionContext, serviceProvider);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
                 LoggingService loggingService = serviceProvider.GetRequiredService<LoggingService>();
-                await loggingService.LogToDiscord(LogSeverity.Error, LogType.Command, ex.ToString());
+
+                await loggingService.LogAsync(new BotLogMessage()
+                {
+                    Source = exception.Source,
+                    Severity = LogSeverity.Error,
+                    Message = exception.ToString()
+                });
             }
         };
     }
 
-    private static void InitializeBuffReminderService(IServiceProvider serviceProvider)
-    {
-        BuffReminderService buffReminderService = serviceProvider.GetRequiredService<BuffReminderService>();
-        buffReminderService.StartService();
-    }
-
-    private static void InitializeDatabaseService(IServiceProvider serviceProvider)
-    {
-        GalaxyBotContext context = serviceProvider
-            .GetRequiredService<IDbContextFactory<GalaxyBotContext>>()
-            .CreateDbContext();
-        Console.WriteLine($"Data saving to {context.DbPath}");
-    }
+    private static void InitializeBuffReminderService(IServiceProvider serviceProvider) => serviceProvider
+            .GetRequiredService<BuffReminderService>()
+            .StartService();
 }
