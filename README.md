@@ -1,6 +1,6 @@
-# GalaxyBotv2
+# GalaxyBot
 
-GalaxyBotv2 is a Discord bot with various functionalities for the Galaxy Gaming Community.
+GalaxyBot is a Discord bot with various functionalities for the Galaxy Gaming Community.
 
 ## Setup
 
